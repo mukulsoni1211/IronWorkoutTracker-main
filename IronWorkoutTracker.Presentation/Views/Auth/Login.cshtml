@@ -1,0 +1,20 @@
+﻿ 
+ @{
+    Layout = "_BaseLayout";
+}
+
+
+@if(!string.IsNullOrEmpty(ViewBag?.Error) ){
+
+    <h6> @ViewBag?.Error </h6>
+}
+
+<form  asp-controller="Auth" asp-action="Login"  >
+    <label for="email" > Email </label>
+    <input name="email"  id="email" type="text">
+
+     <label for="password" > Password </label>
+     <input name="password" id="password" type="password">
+
+     <input type="submit">
+</form>
