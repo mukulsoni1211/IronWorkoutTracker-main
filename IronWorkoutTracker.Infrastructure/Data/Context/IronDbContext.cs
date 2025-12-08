@@ -13,5 +13,27 @@ namespace IronWorkoutTracker.Infrastructure.Data.Context
 
         // DbSets
         public DbSet<User> Users { get; set; }
+        public DbSet<WorkoutProgram> WorkoutPrograms { get; set; }
+        public DbSet<UserProgram> UserPrograms { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<WorkoutProgram>()
+                .HasOne(p => p.CreatedBy)
+                .WithMany(u => u.WorkoutPrograms)
+                .HasForeignKey(p => p.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserProgram>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.UserPrograms)
+                .HasForeignKey(up => up.UserId);
+
+            modelBuilder.Entity<UserProgram>()
+                .HasOne(up => up.WorkoutProgram)
+                .WithMany(p => p.UserPrograms)
+                .HasForeignKey(up => up.ProgramId);
+        }
     }
 }
