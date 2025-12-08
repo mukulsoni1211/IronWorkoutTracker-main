@@ -1,9 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+
+
 using IronWorkoutTracker.Application;
 using IronWorkoutTracker.Domain;
 using IronWorkoutTracker.Presentation;
 using IronWorkoutTracker.Infrastructure;
+using IronWorkoutTracker.Infrastructure.Data.Context;
 using IronWorkout.Shared;
-;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +30,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<IronDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 app.UseHttpsRedirection();
 app.UseRouting();
