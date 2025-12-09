@@ -10,11 +10,13 @@ namespace IronWorkoutTracker.Presentation.Controllers
     {
         private readonly IWorkoutProgramRepository _repo;
         private readonly CurrentUser _currentUser;
+        private readonly IUserProgramRepository _userProgramRepo;
 
-        public WorkoutProgramController(IWorkoutProgramRepository repo, CurrentUser currentUser)
+        public WorkoutProgramController(IWorkoutProgramRepository repo, IUserProgramRepository userProgramRepo, CurrentUser currentUser)
         {
             _repo = repo;
             _currentUser = currentUser;
+            _userProgramRepo = userProgramRepo;
         }
 
         // GET: /WorkoutProgram
@@ -48,9 +50,10 @@ namespace IronWorkoutTracker.Presentation.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            // Get current user id from claims (e.g. JWT or cookie auth)
-            if (!string.IsNullOrEmpty(_currentUser?.UserId) && int.TryParse(_currentUser.UserId, out var parsedUserId))
-            {
+            int? parsedUserId = null;
+            if (!string.IsNullOrEmpty(_currentUser?.UserId) && int.TryParse(_currentUser.UserId, out var userId))
+            {   
+                parsedUserId = userId;
                 model.CreatedById = parsedUserId;
             }
             else
@@ -59,9 +62,20 @@ namespace IronWorkoutTracker.Presentation.Controllers
             }
 
             model.CreatedDate = DateTime.UtcNow;
-            // Visibility will use whatever is posted from the checkbox; default false if unchecked
-
             await _repo.AddAsync(model);
+
+            // Attach User with Program by creating UserProgram
+            if (parsedUserId.HasValue)
+            {
+                var userProgram = new UserProgram
+                {
+                    UserId = parsedUserId.Value,
+                    ProgramId = model.WorkoutProgramId   // or WorkoutProgramId if that's the FK name
+                };
+
+                await _userProgramRepo.AddAsync(userProgram);
+            }
+
             return RedirectToAction(
                         actionName: "Details",
                         controllerName: "WorkoutProgram",
