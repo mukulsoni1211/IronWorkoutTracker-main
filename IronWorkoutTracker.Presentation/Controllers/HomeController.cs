@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using IronWorkoutTracker.Presentation.Models;
 using Microsoft.AspNetCore.Authorization;
+using IronWorkoutTracker.Application.IRepositories;
 
 namespace IronWorkoutTracker.Presentation.Controllers;
 
@@ -9,15 +10,18 @@ namespace IronWorkoutTracker.Presentation.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IWorkoutProgramRepository _workoutProgramRepository;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IWorkoutProgramRepository workoutProgramRepository)
     {
         _logger = logger;
+        _workoutProgramRepository = workoutProgramRepository;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var programs = await _workoutProgramRepository.GetAllAsync();
+        return View(programs); // pass programs to home
     }
 
     public IActionResult Privacy()

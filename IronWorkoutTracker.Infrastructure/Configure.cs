@@ -18,6 +18,8 @@ public static class Configure
     private static void AddRepositories(IServiceCollection service)
     {
         service.AddScoped<IUserRepository, UserRepository>();
+        service.AddScoped<IWorkoutProgramRepository, WorkoutProgramRepository>();
+     
     }
 
     private static void AddBusinessServices(IServiceCollection service)
