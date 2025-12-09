@@ -2,6 +2,7 @@ using System.Security.Claims;
 using IronWorkoutTracker.Application.IRepositories;
 using IronWorkoutTracker.Domain.Entities;
 using IronWorkoutTracker.Presentation.PresentationConstants;
+using IronWorkoutTracker.Presentation.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using IronWorkout.Shared.EnvironmentStateModels;
 namespace IronWorkoutTracker.Presentation.Controllers
@@ -11,12 +12,14 @@ namespace IronWorkoutTracker.Presentation.Controllers
         private readonly IWorkoutProgramRepository _repo;
         private readonly CurrentUser _currentUser;
         private readonly IUserProgramRepository _userProgramRepo;
+        private readonly IProgramDayRepository _programDayRepo;
 
-        public WorkoutProgramController(IWorkoutProgramRepository repo, IUserProgramRepository userProgramRepo, CurrentUser currentUser)
+        public WorkoutProgramController(IWorkoutProgramRepository repo, IUserProgramRepository userProgramRepo, CurrentUser currentUser, IProgramDayRepository programDayRepo)
         {
             _repo = repo;
             _currentUser = currentUser;
             _userProgramRepo = userProgramRepo;
+            _programDayRepo = programDayRepo;
         }
 
         // GET: /WorkoutProgram
@@ -32,7 +35,14 @@ namespace IronWorkoutTracker.Presentation.Controllers
             if (program == null)
                 return NotFound();
 
-            return View(program);
+            var days = await _programDayRepo.GetByProgramIdAsync(id);
+
+            var vm = new WorkoutProgramDetailsViewModel
+            {
+                Program = program,
+                Days = days
+            };
+            return View(vm);
         }
 
 
@@ -70,7 +80,7 @@ namespace IronWorkoutTracker.Presentation.Controllers
                 var userProgram = new UserProgram
                 {
                     UserId = parsedUserId.Value,
-                    ProgramId = model.WorkoutProgramId   // or WorkoutProgramId if that's the FK name
+                    WorkoutProgramId = model.WorkoutProgramId   // or WorkoutProgramId if that's the FK name
                 };
 
                 await _userProgramRepo.AddAsync(userProgram);

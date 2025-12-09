@@ -20,6 +20,7 @@ public static class Configure
         service.AddScoped<IUserRepository, UserRepository>();
         service.AddScoped<IWorkoutProgramRepository, WorkoutProgramRepository>();
         service.AddScoped<IUserProgramRepository, UserProgramRepository>();
+        service.AddScoped<IProgramDayRepository, ProgramDayRepository>();
 
      
     }

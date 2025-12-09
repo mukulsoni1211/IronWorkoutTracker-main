@@ -1,22 +1,51 @@
-@model IronWorkoutTracker.Domain.Entities.WorkoutProgram
+@model IronWorkoutTracker.Presentation.ViewModels.WorkoutProgramDetailsViewModel
 
+
+<a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to list</a>
 <h2>Workout Program Details</h2>
 
 <dl class="row">
     <dt class="col-sm-3">Name</dt>
-    <dd class="col-sm-9">@Model.Name</dd>
+    <dd class="col-sm-9">@Model.Program.Name</dd>
 
     <dt class="col-sm-3">Description</dt>
-    <dd class="col-sm-9">@Model.Description</dd>
+    <dd class="col-sm-9">@Model.Program.Description</dd>
 
     <dt class="col-sm-3">Visibility</dt>
-    <dd class="col-sm-9">@Model.Visibility</dd>
+    <dd class="col-sm-9">@Model.Program.Visibility</dd>
 
     <dt class="col-sm-3">Created By</dt>
-    <dd class="col-sm-9">@Model.CreatedBy?.Name</dd>
+    <dd class="col-sm-9">@Model.Program.CreatedBy?.Name</dd>
 
     <dt class="col-sm-3">Created Date</dt>
-    <dd class="col-sm-9">@Model.CreatedDate.ToString("yyyy-MM-dd HH:mm")</dd>
+    <dd class="col-sm-9">@Model.Program.CreatedDate.ToString("yyyy-MM-dd HH:mm")</dd>
 </dl>
 
-<a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to list</a>
+<div class="d-flex flex-wrap gap-3">
+@foreach (var day in Model.Days)
+{
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">@day.Title</h5>
+            <p class="card-text">@day.Note</p>
+            <a asp-controller="ProgramDay"
+               asp-action="Edit"
+               asp-route-id="@day.ProgramDayId"
+               class="btn btn-sm btn-primary">Edit</a>
+            <form asp-controller="ProgramDay"
+                  asp-action="Delete"
+                  asp-route-id="@day.ProgramDayId"
+                  method="post"
+                  class="d-inline">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+}
+</div>
+<a asp-controller="ProgramDay"
+   asp-action="Create"
+   asp-route-workoutProgramId="@Model.Program.WorkoutProgramId"
+   class="btn btn-success mt-3">
+    Add Day
+</a>

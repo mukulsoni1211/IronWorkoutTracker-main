@@ -15,6 +15,8 @@ namespace IronWorkoutTracker.Infrastructure.Data.Context
         public DbSet<User> Users { get; set; }
         public DbSet<WorkoutProgram> WorkoutPrograms { get; set; }
         public DbSet<UserProgram> UserPrograms { get; set; }
+        public DbSet<ProgramDay> ProgramDays { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -33,7 +35,7 @@ namespace IronWorkoutTracker.Infrastructure.Data.Context
             modelBuilder.Entity<UserProgram>()
                 .HasOne(up => up.WorkoutProgram)
                 .WithMany(p => p.UserPrograms)
-                .HasForeignKey(up => up.ProgramId);
+                .HasForeignKey(up => up.WorkoutProgramId);
         }
     }
 }

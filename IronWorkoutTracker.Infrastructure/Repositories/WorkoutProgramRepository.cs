@@ -16,7 +16,7 @@ public class WorkoutProgramRepository : IWorkoutProgramRepository
         => _db.WorkoutPrograms.Include(p => p.CreatedBy).ToListAsync();
 
     public Task<WorkoutProgram?> GetByIdAsync(int id)
-        => _db.WorkoutPrograms.FirstOrDefaultAsync(p => p.WorkoutProgramId == id);
+        => _db.WorkoutPrograms.Include(p => p.CreatedBy).FirstOrDefaultAsync(p => p.WorkoutProgramId == id);
 
     public async Task AddAsync(WorkoutProgram program)
     {
