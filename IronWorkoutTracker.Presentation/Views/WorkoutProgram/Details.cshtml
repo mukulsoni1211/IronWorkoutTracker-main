@@ -1,0 +1,22 @@
+@model IronWorkoutTracker.Domain.Entities.WorkoutProgram
+
+<h2>Workout Program Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+
+    <dt class="col-sm-3">Description</dt>
+    <dd class="col-sm-9">@Model.Description</dd>
+
+    <dt class="col-sm-3">Visibility</dt>
+    <dd class="col-sm-9">@Model.Visibility</dd>
+
+    <dt class="col-sm-3">Created By</dt>
+    <dd class="col-sm-9">@Model.CreatedBy?.Name</dd>
+
+    <dt class="col-sm-3">Created Date</dt>
+    <dd class="col-sm-9">@Model.CreatedDate.ToString("yyyy-MM-dd HH:mm")</dd>
+</dl>
+
+<a asp-action="Index" class="btn btn-secondary">Back to list</a>
