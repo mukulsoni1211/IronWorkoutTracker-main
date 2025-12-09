@@ -5,5 +5,5 @@ namespace IronWorkoutTracker.Application.IRepositories;
 
 public interface IUserRepository
 {
-    Task<User> GetUserByEmailAndPassword(string email , string HashedPassword);
+    Task<User> GetUserByEmailAndPassword(string email , string password);
 }

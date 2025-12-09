@@ -1,46 +1,29 @@
 using System;
 using IronWorkoutTracker.Application.IRepositories;
 using IronWorkoutTracker.Domain.Entities;
-
-
+using IronWorkoutTracker.Infrastructure.Data.Context;
+using System.Threading.Tasks;
 namespace IronWorkoutTracker.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 public class UserRepository : IUserRepository
 {
-    public UserRepository(/*Inject Db Context Here*/ )
+    private readonly IronDbContext _dbContext;
+
+    public UserRepository(IronDbContext dbContext)
     {
-        
+        _dbContext = dbContext;
     }
 
-    public async Task<User> GetUserByEmailAndPassword(string email , string HashedPassword)
+    public async Task<User> GetUserByEmailAndPassword(string email , string password)
     {
-        //EF method , _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == email && x.Password == HashedPassword);
-        if(email=="abc@example.com" && HashedPassword == "dsrfgkdnfognoq")
-        {
-            return new User
-            {
-                Id=    1,
-                Email = email,
-                Name = "John Doe",
-                Password = "dsrfgkdnfognoq",
-                Role = "ADMIN"
-            };
-        }
 
-        if(email=="pqr@example.com" && HashedPassword == "dsrfgkdnfognoq")
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user != null && password == user.Password)
         {
-            return new User
-            {
-                Id=    1,
-                Email = email,
-                Name = "John Doe",
-                Password = "dsrfgkdnfognoq",
-                Role = "USER"
-            };
+            return user;
         }
 
         return  null;
     }
-
-
 }

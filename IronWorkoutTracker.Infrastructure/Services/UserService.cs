@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using IronWorkoutTracker.Application.IRepositories;
 using IronWorkoutTracker.Application.IServices;
 using IronWorkoutTracker.Application.ServiceDtos;
@@ -16,9 +17,8 @@ public class UserService : IUserService
     }
     public async Task<UserServiceModel> GetUserByEmailAndPassword(string email, string password)
     {
-        var passwordHash =  PasswordHelper.HashPassword(password); //Calaulate
-
-        var domainuser = await _userRepository.GetUserByEmailAndPassword(email, passwordHash);
+        // var passwordHash =  PasswordHelper.HashPassword(password); // Will later use hashed password for comparison
+        var domainuser = await _userRepository.GetUserByEmailAndPassword(email, password);
 
         if (domainuser != null)
         {
@@ -26,7 +26,7 @@ public class UserService : IUserService
             {
                 UserId = domainuser.Id,
                 Email = domainuser.Email,
-                UserName = domainuser.Name,
+                UserName = domainuser.Name ?? string.Empty,
                 Role = domainuser.Role
             };
         }
