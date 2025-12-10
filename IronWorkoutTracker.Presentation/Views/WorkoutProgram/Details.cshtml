@@ -43,12 +43,15 @@
             <p class="card-text">@day.Note</p>
             
             <button type="button"
-                    class="btn btn-sm btn-primary edit-btn"
+                    class="btn btn-sm btn-primary"
+                    data-action="EditModal"
+                    data-controller="ProgramDay"
                     data-id="@day.ProgramDayId"
                     data-bs-toggle="modal"
                     data-bs-target="#programDayModal">
                 Edit
             </button>
+
 
             <form asp-controller="ProgramDay"
                   asp-action="Delete"
