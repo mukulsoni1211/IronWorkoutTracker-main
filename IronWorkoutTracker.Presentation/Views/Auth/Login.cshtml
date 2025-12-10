@@ -9,12 +9,31 @@
     <h6> @ViewBag?.Error </h6>
 }
 
-<form  asp-controller="Auth" asp-action="Login"  >
-    <label for="email" > Email </label>
-    <input name="email"  id="email" type="text">
+<div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div class="card shadow p-4" style="width: 380px; border-radius: 12px;">
 
-     <label for="password" > Password </label>
-     <input name="password" id="password" type="password">
+        <h3 class="text-center mb-4">Login</h3>
 
-     <input type="submit">
-</form>
+        <form asp-controller="Auth" asp-action="Login" method="post">
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input name="email" type="email" class="form-control" placeholder="Enter your email" required />
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input name="password" type="password" class="form-control" placeholder="Enter your password" required />
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
