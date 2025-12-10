@@ -70,7 +70,10 @@ namespace IronWorkoutTracker.Presentation.Controllers
                 }
             }
 
-            return Json(new { success = true });
+            return RedirectToAction(
+                actionName: "Details",
+                controllerName: "WorkoutProgram",
+                routeValues: new { id = model.WorkoutProgramId });
         }
 
         // POST: /ProgramDay/Delete/5

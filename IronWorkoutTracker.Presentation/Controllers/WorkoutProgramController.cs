@@ -110,8 +110,20 @@ namespace IronWorkoutTracker.Presentation.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            await _repo.UpdateAsync(model);
-            return RedirectToAction(nameof(Index));
+            var existing = await _repo.GetByIdAsync(model.WorkoutProgramId);
+            if (existing == null)
+                return NotFound();
+
+            existing.Name = model.Name;
+            existing.Description = model.Description;
+            existing.Visibility = model.Visibility;
+
+            await _repo.UpdateAsync(existing);
+
+            return RedirectToAction(
+                actionName: "Details",
+                controllerName: "WorkoutProgram",
+                routeValues: new { id = model.WorkoutProgramId });
         }
 
         // POST: /WorkoutProgram/Delete/5

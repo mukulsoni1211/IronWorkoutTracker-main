@@ -28,6 +28,11 @@
             <td>@item.CreatedDate.ToString("yyyy-MM-dd")</td>
             <td>
                 <a asp-controller="WorkoutProgram"
+                   asp-action="Edit"
+                   asp-route-id="@item.WorkoutProgramId">
+                    Edit
+                </a>
+                <a asp-controller="WorkoutProgram"
                    asp-action="Details"
                    asp-route-id="@item.WorkoutProgramId">
                     Details
