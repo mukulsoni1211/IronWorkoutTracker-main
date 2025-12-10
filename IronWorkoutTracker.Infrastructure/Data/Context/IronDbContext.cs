@@ -16,6 +16,7 @@ namespace IronWorkoutTracker.Infrastructure.Data.Context
         public DbSet<WorkoutProgram> WorkoutPrograms { get; set; }
         public DbSet<UserProgram> UserPrograms { get; set; }
         public DbSet<ProgramDay> ProgramDays { get; set; }
+        public DbSet<Exercise> Exercises { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
