@@ -1,6 +1,5 @@
 @model IronWorkoutTracker.Presentation.ViewModels.WorkoutProgramDetailsViewModel
 
-
 <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to list</a>
 <h2>Workout Program Details</h2>
 
@@ -21,31 +20,54 @@
     <dd class="col-sm-9">@Model.Program.CreatedDate.ToString("yyyy-MM-dd HH:mm")</dd>
 </dl>
 
-<div class="d-flex flex-wrap gap-3">
+
+<!-- Add Day Button -->
+<button type="button"
+        class="btn btn-success mb-3"
+        id="addDayBtn"
+        data-action="Create"
+        data-controller="ProgramDay"
+        data-program-id="@Model.Program.WorkoutProgramId"
+        data-bs-toggle="modal"
+        data-bs-target="#programDayModal">
+    Add Day
+</button>
+
+<!-- Program Days Cards -->
+<div class="d-flex flex-wrap gap-3 mb-4">
 @foreach (var day in Model.Days)
 {
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem;" id="day-@day.ProgramDayId">
         <div class="card-body">
             <h5 class="card-title">@day.Title</h5>
             <p class="card-text">@day.Note</p>
-            <a asp-controller="ProgramDay"
-               asp-action="Edit"
-               asp-route-id="@day.ProgramDayId"
-               class="btn btn-sm btn-primary">Edit</a>
+            
+            <button type="button"
+                    class="btn btn-sm btn-primary edit-btn"
+                    data-id="@day.ProgramDayId"
+                    data-bs-toggle="modal"
+                    data-bs-target="#programDayModal">
+                Edit
+            </button>
+
             <form asp-controller="ProgramDay"
                   asp-action="Delete"
                   asp-route-id="@day.ProgramDayId"
                   method="post"
-                  class="d-inline">
+                  class="d-inline"
+                  onsubmit="return confirm('Are you sure?');">
                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
             </form>
         </div>
     </div>
 }
 </div>
-<a asp-controller="ProgramDay"
-   asp-action="Create"
-   asp-route-workoutProgramId="@Model.Program.WorkoutProgramId"
-   class="btn btn-success mt-3">
-    Add Day
-</a>
+
+<!-- Modal -->
+<div class="modal fade" id="programDayModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContent">
+            <!-- Loaded via AJAX -->
+        </div>
+    </div>
+</div>

@@ -6,7 +6,6 @@ public class ProgramDay
 {
     public int ProgramDayId { get; set; }
 
-    public int UserId { get; set; }
     public int WorkoutProgramId { get; set; }
 
     public string Title { get; set; }
@@ -14,6 +13,5 @@ public class ProgramDay
     public DateTime? CreatedAt { get; set; }
     public int? Order { get; set; }
 
-    public User User { get; set; }
-    public WorkoutProgram WorkoutProgram { get; set; }
+    public WorkoutProgram? WorkoutProgram { get; set; }
 }

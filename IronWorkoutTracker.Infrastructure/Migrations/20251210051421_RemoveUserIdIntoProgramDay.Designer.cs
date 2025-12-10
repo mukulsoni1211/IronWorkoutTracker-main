@@ -3,6 +3,7 @@ using System;
 using IronWorkoutTracker.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IronWorkoutTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(IronDbContext))]
-    partial class IronDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251210051421_RemoveUserIdIntoProgramDay")]
+    partial class RemoveUserIdIntoProgramDay
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,10 +46,15 @@ namespace IronWorkoutTracker.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("WorkoutProgramId")
                         .HasColumnType("integer");
 
                     b.HasKey("ProgramDayId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("WorkoutProgramId");
 
@@ -148,11 +156,19 @@ namespace IronWorkoutTracker.Infrastructure.Migrations
 
             modelBuilder.Entity("IronWorkoutTracker.Domain.Entities.ProgramDay", b =>
                 {
+                    b.HasOne("IronWorkoutTracker.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("IronWorkoutTracker.Domain.Entities.WorkoutProgram", "WorkoutProgram")
                         .WithMany()
                         .HasForeignKey("WorkoutProgramId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
 
                     b.Navigation("WorkoutProgram");
                 });
