@@ -1,0 +1,86 @@
+@{
+    Layout = "_ApplicationLayout";
+}
+
+@model List<IronWorkoutTracker.Domain.Entities.Exercise>
+
+<div class="d-flex justify-content-between  mb-3">
+    <h1 class="h3 mb-0">Exercises</h1>
+
+    <button type="button"
+            class="btn btn-success mb-3"
+            id="addExerciseBtn"
+            data-action="Create"
+            data-controller="Exercise"
+            data-bs-toggle="modal"
+            data-bs-target="#GlobalModal">
+        <i class="bi bi-plus"></i> Add Exercise
+    </button>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Equipment</th>
+                <th>Description</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var exercise in Model)
+        {
+            <tr>
+                <td><strong>@exercise.Name</strong></td>
+                <td>@exercise.Category</td>
+                <td>@exercise.Equipment</td>
+                <td>@exercise.Description</td>
+                <td>
+                    @if (exercise.IsActive == true)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </td>
+                <td>
+                    <button type="button"
+                            class="btn btn-sm btn-primary"
+                            data-action="EditModal"
+                            data-controller="Exercise"
+                            data-id="@exercise.ExerciseId"
+                            data-bs-toggle="modal"
+                            data-bs-target="#GlobalModal">
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+
+                    <form asp-controller="Exercise"
+                          asp-action="Delete"
+                          asp-route-id="@exercise.ExerciseId"
+                          method="post"
+                          class="d-inline"
+                          onsubmit="return confirm('Delete this exercise?');">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="GlobalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContent">
+            <!-- Loaded via AJAX -->
+        </div>
+    </div>
+</div>

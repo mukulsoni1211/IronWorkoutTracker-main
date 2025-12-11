@@ -1,15 +1,13 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-document.addEventListener('DOMContentLoaded', function() {
+﻿document.addEventListener('DOMContentLoaded', function() {
     // Handle modal triggers
     document.addEventListener('click', function(e) {
-        const modalTrigger = e.target.closest('[data-bs-target="#programDayModal"]');
-        
+        // Check if clicked element has data-bs-target="#GlobalModal"
+        const modalTrigger = e.target.closest('[data-bs-target="#GlobalModal"]');
+        debugger;
         if (modalTrigger) {
             e.preventDefault();
             
+            // Read data attributes from the clicked button
             const controller = modalTrigger.dataset.controller;
             const action = modalTrigger.dataset.action;
             const id = modalTrigger.dataset.id;
@@ -24,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             console.log('Loading URL:', url);
+            console.log('Controller:', controller, 'Action:', action, 'ID:', id);
             
             fetch(url)
                 .then(response => {
@@ -32,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(html => {
                     document.getElementById('modalContent').innerHTML = html;
-                    const modal = new bootstrap.Modal(document.getElementById('programDayModal'));
+                    const modal = new bootstrap.Modal(document.getElementById('GlobalModal'));
                     modal.show();
                 })
                 .catch(error => {

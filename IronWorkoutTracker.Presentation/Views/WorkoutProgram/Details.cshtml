@@ -1,7 +1,8 @@
 @model IronWorkoutTracker.Presentation.ViewModels.WorkoutProgramDetailsViewModel
-
-<a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to list</a>
-<h2>Workout Program Details</h2>
+<div class="d-flex justify-content-between  mb-5">
+    <h2>Workout Program Details</h2>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to list</a>
+</div>
 
 <dl class="row">
     <dt class="col-sm-3">Name</dt>
@@ -17,7 +18,7 @@
     <dd class="col-sm-9">@Model.Program.CreatedBy?.Name</dd>
 
     <dt class="col-sm-3">Created Date</dt>
-    <dd class="col-sm-9">@Model.Program.CreatedDate.ToString("yyyy-MM-dd HH:mm")</dd>
+    <dd class="col-sm-9">@Model.Program.CreatedDate.ToString("dd MMM, yyyy")</dd>
 </dl>
 
 
@@ -29,7 +30,7 @@
         data-controller="ProgramDay"
         data-program-id="@Model.Program.WorkoutProgramId"
         data-bs-toggle="modal"
-        data-bs-target="#programDayModal">
+        data-bs-target="#GlobalModal">
     Add Day
 </button>
 
@@ -48,7 +49,7 @@
                     data-controller="ProgramDay"
                     data-id="@day.ProgramDayId"
                     data-bs-toggle="modal"
-                    data-bs-target="#programDayModal">
+                    data-bs-target="#GlobalModal">
                 Edit
             </button>
 
@@ -67,7 +68,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="programDayModal" tabindex="-1">
+<div class="modal fade" id="GlobalModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content" id="modalContent">
             <!-- Loaded via AJAX -->

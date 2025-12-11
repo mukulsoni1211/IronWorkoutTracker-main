@@ -1,0 +1,58 @@
+@model IronWorkoutTracker.Domain.Entities.Exercise
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        @(Model?.ExerciseId == 0 || Model?.ExerciseId == null ? "Add Exercise" : "Edit Exercise")
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<form id="exerciseForm" asp-action="SaveExercise" method="post">
+    <div class="modal-body">
+        @if (Model?.ExerciseId > 0)
+        {
+            <input type="hidden" asp-for="ExerciseId" />
+        }
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Category" class="form-label"></label>
+            <input asp-for="Category" class="form-control" />
+            <span asp-validation-for="Category" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Equipment" class="form-label"></label>
+            <input asp-for="Equipment" class="form-control" />
+            <span asp-validation-for="Equipment" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 form-check">
+		    <input type="checkbox" 
+		           id="IsActive" 
+		           name="IsActive" 
+		           class="form-check-input"
+		           @(Model?.IsActive == true ? "checked" : "") />
+		    <label for="IsActive" class="form-check-label">
+		        Mark as Active
+		    </label>
+		</div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+</form>
