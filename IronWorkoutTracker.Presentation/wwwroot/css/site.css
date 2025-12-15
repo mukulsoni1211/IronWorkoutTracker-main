@@ -29,3 +29,19 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+[data-bs-toggle="collapse"] .bi-chevron-down {
+    transition: transform 0.3s ease-in-out;
+}
+
+[data-bs-toggle="collapse"][aria-expanded="true"] .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+[data-bs-toggle="collapse"][aria-expanded="false"] .bi-chevron-down {
+    transform: rotate(0deg);
+}
+
+.border-none.btn:focus, .border-none.btn:active, .border-none.btn:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+}

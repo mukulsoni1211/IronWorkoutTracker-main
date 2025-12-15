@@ -12,18 +12,21 @@
         ← Back to Program
     </a>
 </div>
+<div class="d-flex justify-content-between  mb-5">
+    <h2>@Model.ProgramDay.Title - Exercises</h2>
 
-<h2>@Model.ProgramDay.Title - Exercises</h2>
+    <button type="button"
+            class="btn btn-success mb-3"
+            data-action="Create"
+            data-controller="ProgramDayExercise"
+            data-program-day-id="@Model.ProgramDay.ProgramDayId"
+            data-bs-toggle="modal"
+            data-bs-target="#GlobalModal">
+        <i class="bi bi-plus"></i> Add Exercise
+    </button>
+</div>
 
-<button type="button"
-        class="btn btn-success mb-3"
-        data-action="Create"
-        data-controller="ProgramDayExercise"
-        data-program-day-id="@Model.ProgramDay.ProgramDayId"
-        data-bs-toggle="modal"
-        data-bs-target="#GlobalModal">
-    <i class="bi bi-plus"></i> Add Exercise
-</button>
+
 <!-- Modal -->
 <div class="modal fade" id="GlobalModal" tabindex="-1">
     <div class="modal-dialog">
@@ -34,49 +37,57 @@
 </div>
 @if (Model.Exercises.Any())
 {
-    <div class="row g-3">
-    @foreach (var exercise in Model.Exercises)
-    {
-        <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-header bg-primary text-white">
-                    <span class="badge bg-light text-primary">Exercise @(Model.Exercises.IndexOf(exercise) + 1)</span>
-                </div>
-
-                <div class="card-body">
-                    <h5 class="card-title">@exercise.Exercise?.Name</h5>
-                    
-                    @if (!string.IsNullOrEmpty(exercise.Exercise?.Category))
-                    {
-                        <p class="text-muted small">@exercise.Exercise.Category</p>
-                    }
-
-                    @if (!string.IsNullOrEmpty(exercise.TrainingStyle))
-                    {
-                        <div class="mb-2">
-                            <strong>Style:</strong> @exercise.TrainingStyle
-                        </div>
-                    }
-
-                    @if (!string.IsNullOrEmpty(exercise.Note))
-                    {
-                        <div class="mb-2">
-                            <strong>Note:</strong> @exercise.Note
-                        </div>
-                    }
-
-                    @if (exercise.CreatedAt.HasValue)
-                    {
-                        <small class="text-secondary d-block mt-2">
-                            Added: @exercise.CreatedAt.Value.ToString("MMM dd, yyyy")
-                        </small>
-                    }
-                </div>
-
-                <div class="card-footer bg-light border-top">
-                    <div class="d-flex gap-2">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Exercise</th>
+                    <th>Category</th>
+                    <th>Training Style</th>
+                    <th>Note</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var exercise in Model.Exercises)
+            {
+                <tr>
+                    <td>
+                        <strong>@exercise.Exercise?.Name</strong>
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(exercise.Exercise?.Category))
+                        {
+                            <span class="badge bg-info">@exercise.Exercise.Category</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(exercise.TrainingStyle))
+                        {
+                            <code>@exercise.TrainingStyle</code>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(exercise.Note))
+                        {
+                            <small>@exercise.Note</small>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                    <td>
                         <button type="button"
-                                class="btn btn-sm btn-primary flex-grow-1"
+                                class="btn btn-sm btn-primary"
                                 data-action="EditModal"
                                 data-controller="ProgramDayExercise"
                                 data-id="@exercise.ProgramDayExerciseId"
@@ -89,17 +100,150 @@
                               asp-action="Delete"
                               asp-route-id="@exercise.ProgramDayExerciseId"
                               method="post"
-                              class="flex-grow-1"
+                              class="d-inline"
                               onsubmit="return confirm('Delete this exercise?');">
-                            <button type="submit" class="btn btn-sm btn-danger w-100">
+                            <button type="submit" class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash"></i> Delete
                             </button>
                         </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+                    </td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm border-none"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#sets-@exercise.ProgramDayExerciseId"
+                                aria-expanded="false"
+                                style="font-size: 1.3rem; border: none;">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Accordion for Sets -->
+                <tr>
+                    <td colspan="6">
+                        <div class="collapse" id="sets-@exercise.ProgramDayExerciseId">
+                            <div class="p-3 bg-light border-top">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0">Sets for @exercise.Exercise?.Name</h6>
+                                    <button type="button"
+                                            class="btn btn-sm btn-success"
+                                            data-action="Create"
+                                            data-controller="ProgramDayExerciseSet"
+                                            data-program-day-exercise-id="@exercise.ProgramDayExerciseId"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#GlobalModal">
+                                        <i class="bi bi-plus"></i> Add Set
+                                    </button>
+                                </div>
+
+                                @if (exercise.Sets?.Any() == true)
+                                {
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-bordered mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Set #</th>
+                                                    <th>Reps</th>
+                                                    <th>Weight</th>
+                                                    <th>Rest (sec)</th>
+                                                    <th>RPE</th>
+                                                    <th>Note</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach (var set in exercise.Sets.OrderBy(s => s.Order))
+                                            {
+                                                 var setIndex = exercise.Sets.Where(s => s.Order <= set.Order).Count();
+                                                <tr>
+                                                    <td>
+                                                        <strong>@setIndex</strong>
+                                                    </td>
+                                                    <td>
+                                                        @(set.Reps ?? 0)
+                                                    </td>
+                                                    <td>
+                                                        @if (set.Weight.HasValue)
+                                                        {
+                                                            <text>@set.Weight kg</text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (set.RestSeconds.HasValue)
+                                                        {
+                                                            <text>@set.RestSeconds</text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (set.RPE.HasValue)
+                                                        {
+                                                            <text>@set.RPE</text>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (!string.IsNullOrEmpty(set.Note))
+                                                        {
+                                                            <small>@set.Note</small>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <button type="button"
+                                                                class="btn btn-xs btn-primary"
+                                                                data-action="EditModal"
+                                                                data-controller="ProgramDayExerciseSet"
+                                                                data-id="@set.ProgramDayExerciseSetId"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#GlobalModal">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+
+                                                        <form asp-controller="ProgramDayExerciseSet"
+                                                              asp-action="Delete"
+                                                              asp-route-id="@set.ProgramDayExerciseSetId"
+                                                              method="post"
+                                                              class="d-inline"
+                                                              onsubmit="return confirm('Delete this set?');">
+                                                            <button type="submit" class="btn btn-xs btn-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info mb-0">
+                                        No sets added yet.
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
     </div>
 }
 else

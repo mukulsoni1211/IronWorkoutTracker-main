@@ -21,6 +21,7 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
             _db.ProgramDayExercises
                .Where(pde => pde.ProgramDayId == programDayId)
                .Include(pde => pde.Exercise)
+               .Include(pde => pde.Sets)
                .OrderBy(pde => pde.Order)
                .ToListAsync();
 
