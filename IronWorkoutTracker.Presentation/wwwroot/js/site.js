@@ -13,13 +13,17 @@
             const id = modalTrigger.dataset.id;
             const programId = modalTrigger.dataset.programId;
             
-            let url = `/${controller}/${action}`;
-            
+            let url = `/${controller}/${action}`;            
+            const programDayId = modalTrigger.dataset.programDayId;
+            debugger
             if (id) {
                 url += `/${id}`;
+            } else if (programDayId) {
+                url += `?programDayId=${programDayId}`;
             } else if (programId) {
                 url += `?workoutProgramId=${programId}`;
             }
+
             
             console.log('Loading URL:', url);
             console.log('Controller:', controller, 'Action:', action, 'ID:', id);

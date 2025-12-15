@@ -1,0 +1,110 @@
+@{
+    Layout = "_ApplicationLayout";
+}
+
+@model IronWorkoutTracker.Presentation.ViewModels.ProgramDayExerciseIndexViewModel
+
+<div class="mb-4">
+    <a asp-controller="WorkoutProgram" 
+       asp-action="Details" 
+       asp-route-id="@Model.ProgramDay.WorkoutProgramId"
+       class="btn btn-secondary">
+        ← Back to Program
+    </a>
+</div>
+
+<h2>@Model.ProgramDay.Title - Exercises</h2>
+
+<button type="button"
+        class="btn btn-success mb-3"
+        data-action="Create"
+        data-controller="ProgramDayExercise"
+        data-program-day-id="@Model.ProgramDay.ProgramDayId"
+        data-bs-toggle="modal"
+        data-bs-target="#GlobalModal">
+    <i class="bi bi-plus"></i> Add Exercise
+</button>
+<!-- Modal -->
+<div class="modal fade" id="GlobalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContent">
+            <!-- Loaded via AJAX -->
+        </div>
+    </div>
+</div>
+@if (Model.Exercises.Any())
+{
+    <div class="row g-3">
+    @foreach (var exercise in Model.Exercises)
+    {
+        <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <span class="badge bg-light text-primary">Exercise @(Model.Exercises.IndexOf(exercise) + 1)</span>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title">@exercise.Exercise?.Name</h5>
+                    
+                    @if (!string.IsNullOrEmpty(exercise.Exercise?.Category))
+                    {
+                        <p class="text-muted small">@exercise.Exercise.Category</p>
+                    }
+
+                    @if (!string.IsNullOrEmpty(exercise.TrainingStyle))
+                    {
+                        <div class="mb-2">
+                            <strong>Style:</strong> @exercise.TrainingStyle
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(exercise.Note))
+                    {
+                        <div class="mb-2">
+                            <strong>Note:</strong> @exercise.Note
+                        </div>
+                    }
+
+                    @if (exercise.CreatedAt.HasValue)
+                    {
+                        <small class="text-secondary d-block mt-2">
+                            Added: @exercise.CreatedAt.Value.ToString("MMM dd, yyyy")
+                        </small>
+                    }
+                </div>
+
+                <div class="card-footer bg-light border-top">
+                    <div class="d-flex gap-2">
+                        <button type="button"
+                                class="btn btn-sm btn-primary flex-grow-1"
+                                data-action="EditModal"
+                                data-controller="ProgramDayExercise"
+                                data-id="@exercise.ProgramDayExerciseId"
+                                data-bs-toggle="modal"
+                                data-bs-target="#GlobalModal">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+
+                        <form asp-controller="ProgramDayExercise"
+                              asp-action="Delete"
+                              asp-route-id="@exercise.ProgramDayExerciseId"
+                              method="post"
+                              class="flex-grow-1"
+                              onsubmit="return confirm('Delete this exercise?');">
+                            <button type="submit" class="btn btn-sm btn-danger w-100">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        No exercises added yet. Click "Add Exercise" to get started.
+    </div>
+}

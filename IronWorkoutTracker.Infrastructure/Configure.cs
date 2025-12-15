@@ -22,6 +22,7 @@ public static class Configure
         service.AddScoped<IUserProgramRepository, UserProgramRepository>();
         service.AddScoped<IProgramDayRepository, ProgramDayRepository>();
         service.AddScoped<IExerciseRepository, ExerciseRepository>();
+        service.AddScoped<IProgramDayExerciseRepository, ProgramDayExerciseRepository>();
      
     }
 

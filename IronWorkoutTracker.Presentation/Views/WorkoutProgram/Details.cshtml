@@ -62,6 +62,13 @@
                   onsubmit="return confirm('Are you sure?');">
                 <button type="submit" class="btn btn-sm btn-danger">Delete</button>
             </form>
+
+             <a asp-controller="ProgramDayExercise"
+               asp-action="Index"
+               asp-route-programDayId="@day.ProgramDayId"
+               class="btn btn-sm btn-info flex-grow-1">
+                <i class="bi bi-gear"></i> Manage Exercises
+            </a>
         </div>
     </div>
 }
