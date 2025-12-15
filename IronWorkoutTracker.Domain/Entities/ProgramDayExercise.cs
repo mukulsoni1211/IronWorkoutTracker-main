@@ -16,4 +16,5 @@ public class ProgramDayExercise
 
     public ProgramDay? ProgramDay { get; set; }
     public Exercise? Exercise { get; set; }
+    public ICollection<ProgramDayExerciseSet> Sets { get; set; } = new List<ProgramDayExerciseSet>();
 }
