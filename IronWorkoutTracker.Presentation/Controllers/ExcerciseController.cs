@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using IronWorkoutTracker.Application.IRepositories;
 using IronWorkoutTracker.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IronWorkoutTracker.Presentation.Controllers
@@ -15,6 +16,8 @@ namespace IronWorkoutTracker.Presentation.Controllers
         }
 
         // GET: /Exercise
+        // Authorize with Admin role
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var exercises = await _repo.GetAllAsync();
