@@ -134,5 +134,40 @@ namespace IronWorkoutTracker.Presentation.Controllers
             await _repo.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Adopt(int id)
+        {
+            int userId = 0;
+            if (int.TryParse(_currentUser.UserId, out userId))
+            {
+                var userProgram = new UserProgram
+                {
+                    UserId = userId,
+                    WorkoutProgramId = id
+                };
+
+                await _userProgramRepo.AddAsync(userProgram);
+            }
+            return RedirectToAction(
+                actionName: "Index",
+                controllerName: "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unadopt(int id)
+        {
+            int userId;
+            if (int.TryParse(_currentUser.UserId, out userId))
+            {
+                await _userProgramRepo.DeleteByUserAndProgramAsync(userId, id);
+            }
+
+            return RedirectToAction(
+                actionName: "Index",
+                controllerName: "Home");
+        }
     }
 }

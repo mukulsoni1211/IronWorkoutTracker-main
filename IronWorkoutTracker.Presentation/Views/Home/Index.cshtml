@@ -1,6 +1,8 @@
-﻿@{
+﻿@using IronWorkout.Shared.EnvironmentStateModels
+@{
     ViewData["Title"] = "Home Page";
 }
+@inject CurrentUser currentUser
 
 @model IEnumerable<IronWorkoutTracker.Domain.Entities.WorkoutProgram>
 <div class="d-flex justify-content-between  mb-5">
@@ -39,6 +41,36 @@
                    asp-route-id="@item.WorkoutProgramId">
                     Details
                 </a>
+                @{
+                    bool isTrue = item.UserPrograms != null && item.UserPrograms.Any(up => up.UserId == int.Parse(currentUser.UserId));
+                }
+                @if (isTrue)
+                {   
+                    @if (item.CreatedById != int.Parse(currentUser.UserId))
+                    {
+                        <form asp-controller="WorkoutProgram"
+                              asp-action="Unadopt"
+                              asp-route-id="@item.WorkoutProgramId"
+                              method="post"
+                              class="d-inline">
+                            <button type="submit" class="btn btn-secondary">
+                                Unadopt
+                            </button>
+                        </form>
+                    }
+                }
+                else
+                {
+                    <form asp-controller="WorkoutProgram"
+                          asp-action="Adopt"
+                          asp-route-id="@item.WorkoutProgramId"
+                          method="post"
+                          class="d-inline">
+                        <button type="submit" class="btn btn-secondary">
+                            Adopt
+                        </button>
+                    </form>
+                }  
             </td>
         </tr>
     }

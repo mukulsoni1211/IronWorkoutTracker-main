@@ -18,5 +18,16 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
             _db.UserPrograms.Add(entity);
             await _db.SaveChangesAsync();
         }
+
+        public async Task DeleteByUserAndProgramAsync(int userId, int workoutProgramId)
+        {
+            var userPrograms = _db.UserPrograms
+                .Where(up => up.UserId == userId && up.WorkoutProgramId == workoutProgramId)
+                .ToList();
+
+            _db.UserPrograms.RemoveRange(userPrograms);
+            _db.SaveChangesAsync();
+        }
+
     }
 }
