@@ -1,6 +1,7 @@
 using IronWorkoutTracker.Application.IRepositories;
 using IronWorkoutTracker.Domain.Entities;
 using IronWorkoutTracker.Infrastructure.Data.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace IronWorkoutTracker.Infrastructure.Repositories
 {
@@ -19,11 +20,11 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
             await _db.SaveChangesAsync();
         }
 
+    
         public async Task DeleteByUserAndProgramAsync(int userId, int workoutProgramId)
         {
-            var userPrograms = _db.UserPrograms
-                .Where(up => up.UserId == userId && up.WorkoutProgramId == workoutProgramId)
-                .ToList();
+            var userPrograms =  _db.UserPrograms
+                .Where(up => up.UserId == userId && up.WorkoutProgramId == workoutProgramId).ToList();
 
             _db.UserPrograms.RemoveRange(userPrograms);
             _db.SaveChangesAsync();

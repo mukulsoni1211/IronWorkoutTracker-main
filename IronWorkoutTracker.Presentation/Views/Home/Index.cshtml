@@ -1,17 +1,49 @@
 ﻿@using IronWorkout.Shared.EnvironmentStateModels
 @{
     ViewData["Title"] = "Home Page";
+    var currentFilter = ViewBag.Filter as string ?? "all";
 }
 @inject CurrentUser currentUser
 
 @model IEnumerable<IronWorkoutTracker.Domain.Entities.WorkoutProgram>
-<div class="d-flex justify-content-between  mb-5">
+<div class="d-flex justify-content-between mb-3">
     <h2>Workout Programs</h2>
 
     <a asp-controller="WorkoutProgram" asp-action="Create" class="btn btn-success">
         Create Workout Program
     </a>
 </div>
+
+<!-- Filter Tabs -->
+<ul class="nav nav-tabs mb-4" id="programTabs" role="tablist">
+    <li class="nav-item" role="presentation"></li>
+        <a class="nav-link @(currentFilter == "myprograms" ? "active" : "")" 
+           asp-controller="Home" 
+           asp-action="Index" 
+           asp-route-filter="myprograms"
+           id="myprograms-tab">
+            My Program
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link @(currentFilter == "all" ? "active" : "")" 
+           asp-controller="Home" 
+           asp-action="Index" 
+           asp-route-filter="all"
+           id="all-tab">
+            All Programs
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link @(currentFilter == "adopted" ? "active" : "")" 
+           asp-controller="Home" 
+           asp-action="Index" 
+           asp-route-filter="adopted"
+           id="adopted-tab">
+            Adopted
+        </a>
+    </li>
+</ul>
 <table class="table mt-3">
     <thead>
         <tr>
