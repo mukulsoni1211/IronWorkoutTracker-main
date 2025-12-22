@@ -14,6 +14,25 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
             _db = db;
         }
 
+        public async Task<UserProgram?> GetByUserAndProgramAsync(int userId, int workoutProgramId)
+        {
+            return await _db.UserPrograms
+                .FirstOrDefaultAsync(up => up.UserId == userId && up.WorkoutProgramId == workoutProgramId);
+        }
+
+        public async Task<UserProgram?> GetByIdAsync(int id)
+        {
+            return await _db.UserPrograms
+                .FirstOrDefaultAsync(up => up.UserProgramId == id);
+        }
+
+        public async Task UpdateAsync(UserProgram userProgram)
+        {
+            _db.UserPrograms.Update(userProgram);
+            await _db.SaveChangesAsync();
+        }
+
+
         public async Task AddAsync(UserProgram entity)
         {
             _db.UserPrograms.Add(entity);

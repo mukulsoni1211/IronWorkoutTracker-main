@@ -1,7 +1,45 @@
-@model IronWorkoutTracker.Presentation.ViewModels.WorkoutProgramDetailsViewModel
+@using IronWorkoutTracker.Domain.Entities
+@using IronWorkoutTracker.Presentation.ViewModels
+@model WorkoutProgramDetailsViewModel
+
 <div class="d-flex justify-content-between  mb-5">
     <h2>Workout Program Details</h2>
     <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to list</a>
+    @if (Model.UserProgram == null)
+    {
+        <!-- Not adopted yet: show Adopt -->
+        <form asp-controller="WorkoutProgram"
+              asp-action="Adopt"
+              asp-route-id="@Model.Program.WorkoutProgramId"
+              method="post">
+            <button type="submit" class="btn btn-secondary">Adopt</button>
+        </form>
+    }
+    else
+    {
+        if (Model.UserProgram.Status == ProgramStatus.NotStarted)
+        {
+            <form asp-controller="WorkoutProgram"
+                  asp-action="Start"
+                  asp-route-id="@Model.UserProgram.UserProgramId"
+                  method="post">
+                <button type="submit" class="btn btn-primary">Start</button>
+            </form>
+        }
+        else if (Model.UserProgram.Status == ProgramStatus.InProgress)
+        {
+            <form asp-controller="WorkoutProgram"
+                  asp-action="Finish"
+                  asp-route-id="@Model.UserProgram.UserProgramId"
+                  method="post">
+                <button type="submit" class="btn btn-success">Finish</button>
+            </form>
+        }
+        else if (Model.UserProgram.Status == ProgramStatus.Finished)
+        {
+            <span class="badge bg-success">Finished</span>
+        }
+    }
 </div>
 
 <dl class="row">

@@ -30,20 +30,33 @@ namespace IronWorkoutTracker.Presentation.Controllers
         }
 
         public async Task<IActionResult> Details(int id)
-        {
+        {   
             var program = await _repo.GetByIdAsync(id);
             if (program == null)
                 return NotFound();
 
             var days = await _programDayRepo.GetByProgramIdAsync(id);
 
+            UserProgram up = null;
+
+            var userId = _currentUser.UserId;
+            int userIdInt = 0;
+
+            if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out userIdInt))
+            {
+                up = await _userProgramRepo.GetByUserAndProgramAsync(userIdInt, id);
+            }
+
+
             var vm = new WorkoutProgramDetailsViewModel
             {
                 Program = program,
-                Days = days
+                Days = days,
+                UserProgram = up
             };
             return View(vm);
         }
+
 
 
         // GET: /WorkoutProgram/Create
@@ -168,6 +181,46 @@ namespace IronWorkoutTracker.Presentation.Controllers
             return RedirectToAction(
                 actionName: "Index",
                 controllerName: "Home");
+        }
+
+        // Start/Finish UserProgram
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Start(int id) // UserProgramId
+        {
+        var userId = _currentUser.UserId;
+        int userIdInt = 0;
+        UserProgram up = null;
+
+        if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out userIdInt))
+        {
+            up = await _userProgramRepo.GetByIdAsync(id);
+            if (up == null || up.UserId != userIdInt) return Forbid();
+        }
+
+        up.Status = ProgramStatus.InProgress;
+        await _userProgramRepo.UpdateAsync(up); // standard EF Core update [web:51][web:57]
+
+        return RedirectToAction("Details", new { id = up.WorkoutProgramId });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Finish(int id) // UserProgramId
+        {
+        var userId = _currentUser.UserId;
+        int userIdInt = 0;
+        UserProgram up = null;
+
+        if (!string.IsNullOrEmpty(userId) && int.TryParse(userId, out userIdInt))
+        {
+            up = await _userProgramRepo.GetByIdAsync(id);
+            if (up == null || up.UserId != userIdInt) return Forbid();
+        }
+
+        up.Status = ProgramStatus.Finished;
+        await _userProgramRepo.UpdateAsync(up);
+
+        return RedirectToAction("Details", new { id = up.WorkoutProgramId });
         }
     }
 }
