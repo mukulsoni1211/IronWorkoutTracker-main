@@ -24,6 +24,7 @@ public static class Configure
         service.AddScoped<IExerciseRepository, ExerciseRepository>();
         service.AddScoped<IProgramDayExerciseRepository, ProgramDayExerciseRepository>();
         service.AddScoped<IProgramDayExerciseSetRepository, ProgramDayExerciseSetRepository>();
+        service.AddScoped<IWorkoutDayRepository, WorkoutDayRepository>();
     }
 
     private static void AddBusinessServices(IServiceCollection service)

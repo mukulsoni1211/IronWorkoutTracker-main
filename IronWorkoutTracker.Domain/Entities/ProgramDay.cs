@@ -14,4 +14,5 @@ public class ProgramDay
     public int? Order { get; set; }
 
     public WorkoutProgram? WorkoutProgram { get; set; }
+    public ICollection<ProgramDayExercise> Exercises { get; set; } = new List<ProgramDayExercise>();
 }
