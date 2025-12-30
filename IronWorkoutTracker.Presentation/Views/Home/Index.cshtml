@@ -1,14 +1,11 @@
-﻿@using IronWorkout.Shared.EnvironmentStateModels
+﻿@model IEnumerable<IronWorkoutTracker.Domain.Entities.WorkoutProgram>
 @{
     ViewData["Title"] = "Home Page";
     var currentFilter = ViewBag.Filter as string ?? "all";
 }
-@inject CurrentUser currentUser
 
-@model IEnumerable<IronWorkoutTracker.Domain.Entities.WorkoutProgram>
 <div class="d-flex justify-content-between mb-3">
     <h2>Workout Programs</h2>
-
     <a asp-controller="WorkoutProgram" asp-action="Create" class="btn btn-success">
         Create Workout Program
     </a>
@@ -16,106 +13,48 @@
 
 <!-- Filter Tabs -->
 <ul class="nav nav-tabs mb-4" id="programTabs" role="tablist">
-    <li class="nav-item" role="presentation">
+    <li class="nav-item">
         <a class="nav-link @(currentFilter == "myprograms" ? "active" : "")" 
-           asp-controller="Home" 
-           asp-action="Index" 
-           asp-route-filter="myprograms"
-           id="myprograms-tab">
+           asp-controller="Home" asp-action="Index" asp-route-filter="myprograms">
             My Programs
         </a>
     </li>
-    <li class="nav-item" role="presentation">
+    <li class="nav-item">
         <a class="nav-link @(currentFilter == "all" ? "active" : "")" 
-           asp-controller="Home" 
-           asp-action="Index" 
-           asp-route-filter="all"
-           id="all-tab">
+           asp-controller="Home" asp-action="Index" asp-route-filter="all">
             All Programs
         </a>
     </li>
-    <li class="nav-item" role="presentation">
+    <li class="nav-item">
         <a class="nav-link @(currentFilter == "history" ? "active" : "")" 
-           asp-controller="Home" 
-           asp-action="Index" 
-           asp-route-filter="history"
-           id="history-tab">
+           asp-controller="Home" asp-action="Index" asp-route-filter="history">
             History
         </a>
     </li>
-    <li class="nav-item" role="presentation">
+    <li class="nav-item">
         <a class="nav-link @(currentFilter == "workout" ? "active" : "")" 
-           asp-controller="Home" 
-           asp-action="Index" 
-           asp-route-filter="workout"
-           id="workout-tab">
+           asp-controller="Home" asp-action="Index" asp-route-filter="workout">
             Workout
         </a>
     </li>
 </ul>
 
-<table class="table mt-3">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Created Date</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@item.Name</td>
-            <td>@item.Description</td>
-            <td>@item.CreatedDate.ToString("dd MMM, yyyy")</td>
-            <td>
-                <a asp-controller="WorkoutProgram"
-                   asp-action="Edit"
-                   class="btn btn-danger"
-                   asp-route-id="@item.WorkoutProgramId">
-                    Edit
-                </a>
-                <a asp-controller="WorkoutProgram"
-                   asp-action="Details"
-                   class="btn btn-primary"
-                   asp-route-id="@item.WorkoutProgramId">
-                    Details
-                </a>
-                @{
-                    bool isTrue = item.UserPrograms != null && item.UserPrograms.Any(up => up.UserId == int.Parse(currentUser.UserId));
-                }
-                @if (isTrue)
-                {   
-                    @if (item.CreatedById != int.Parse(currentUser.UserId))
-                    {
-                        <form asp-controller="WorkoutProgram"
-                              asp-action="Unadopt"
-                              asp-route-id="@item.WorkoutProgramId"
-                              method="post"
-                              class="d-inline">
-                            <button type="submit" class="btn btn-secondary">
-                                Unadopt
-                            </button>
-                        </form>
-                    }
-                }
-                else
-                {
-                    <form asp-controller="WorkoutProgram"
-                          asp-action="Adopt"
-                          asp-route-id="@item.WorkoutProgramId"
-                          method="post"
-                          class="d-inline">
-                        <button type="submit" class="btn btn-secondary">
-                            Adopt
-                        </button>
-                    </form>
-                }  
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
-
+<!-- Tab Content -->
+@switch(currentFilter.ToLower())
+{
+    case "myprograms":
+        @await Html.PartialAsync("_MyProgramsTab", Model)
+        break;
+    case "all":
+        @await Html.PartialAsync("_AllProgramsTab", Model)
+        break;
+    case "history":
+        @await Html.PartialAsync("_HistoryTab", Model)
+        break;
+    case "workout":
+        @await Html.PartialAsync("_WorkoutTab", Model)
+        break;
+    default:
+        @await Html.PartialAsync("_AllProgramsTab", Model)
+        break;
+}

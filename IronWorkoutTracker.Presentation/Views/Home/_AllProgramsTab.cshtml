@@ -1,0 +1,34 @@
+@using IronWorkout.Shared.EnvironmentStateModels
+@model IEnumerable<IronWorkoutTracker.Domain.Entities.WorkoutProgram>
+@inject CurrentUser currentUser
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Description</td>
+            <td>@item.CreatedDate.ToString("dd MMM, yyyy")</td>
+            <td>
+                <a asp-controller="WorkoutProgram" asp-action="Details" 
+                   class="btn btn-sm btn-primary" asp-route-id="@item.WorkoutProgramId">
+                    Details
+                </a>
+                <form asp-controller="WorkoutProgram" asp-action="Adopt" 
+                      asp-route-id="@item.WorkoutProgramId" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-secondary">Adopt</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -238,7 +238,7 @@ namespace IronWorkoutTracker.Presentation.Controllers
             }
 
 
-            return RedirectToAction("Details", new { id = up.WorkoutProgramId });
+            return RedirectToAction("Index", "Home", new { filter = "workout" });
         }
 
         
@@ -259,7 +259,7 @@ namespace IronWorkoutTracker.Presentation.Controllers
             up.Status = ProgramStatus.Finished;
             await _userProgramRepo.UpdateAsync(up);
 
-            return RedirectToAction("Details", new { id = up.WorkoutProgramId });
+            return RedirectToAction("Index", "Home", new { filter = "myprograms" });
         }
     }
 }

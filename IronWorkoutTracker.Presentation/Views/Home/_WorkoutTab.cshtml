@@ -1,0 +1,30 @@
+@using IronWorkout.Shared.EnvironmentStateModels
+@model IEnumerable<IronWorkoutTracker.Domain.Entities.WorkoutProgram>
+@using IronWorkoutTracker.Domain.Entities
+@inject CurrentUser currentUser
+@foreach (var program in Model)
+{
+    
+    var userProgram = program.UserPrograms?.FirstOrDefault(up => up.UserId == int.Parse(currentUser.UserId));
+    
+    <div class="card">
+        <div class="card-header">
+            <h5>@program.Name - Current Workout</h5>
+            <small class="text-muted">Started: @userProgram?.StartDate.ToString("dd MMM, yyyy")</small>
+        </div>
+        <div class="card-body">
+            <p>@program.Description</p>
+            
+            <!-- Add your workout forms/functionality here -->
+            <a asp-controller="WorkoutProgram" asp-action="Details" 
+               class="btn btn-primary" asp-route-id="@program.WorkoutProgramId">
+                Continue Workout
+            </a>
+            
+            <form asp-controller="WorkoutProgram" asp-action="Finish" 
+                  asp-route-id="@userProgram.UserProgramId" method="post" class="d-inline">
+                <button type="submit" class="btn btn-success">Mark as Finished</button>
+            </form>
+        </div>
+    </div>
+}

@@ -32,7 +32,7 @@ public class HomeController : Controller
             // My programs: created OR adopted
             "myprograms" => allPrograms.Where(p => 
                 p.CreatedById == currentUserId || 
-                (p.UserPrograms != null && p.UserPrograms.Any(up => up.UserId == currentUserId))),
+                (p.UserPrograms != null && p.UserPrograms.Any(up => up.UserId == currentUserId && up.Status != ProgramStatus.Finished))),
 
             // All programs: didn't create AND didn't adopt
             "all" => allPrograms.Where(p => 
@@ -55,6 +55,7 @@ public class HomeController : Controller
         };
 
         ViewBag.Filter = filter;
+        ViewBag.CurrentUserId = currentUserId;
         return View(filteredPrograms);
     }
 

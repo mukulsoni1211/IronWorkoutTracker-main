@@ -1,0 +1,73 @@
+@using IronWorkout.Shared.EnvironmentStateModels
+@model IEnumerable<IronWorkoutTracker.Domain.Entities.WorkoutProgram>
+@using IronWorkoutTracker.Domain.Entities
+@inject CurrentUser currentUser
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        var userProgram = item.UserPrograms?.FirstOrDefault(up => up.UserId == int.Parse(currentUser.UserId));
+        var isCreated = item.CreatedById == int.Parse(currentUser.UserId);
+        
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Description</td>
+            <td>
+                @if (userProgram != null)
+                {
+                    <span class="badge @(userProgram.Status == ProgramStatus.Finished ? "bg-success" : 
+                                       userProgram.Status == ProgramStatus.InProgress ? "bg-warning" : "bg-secondary")">
+                        @userProgram.Status
+                    </span>
+                }
+            </td>
+            <td>
+                <a asp-controller="WorkoutProgram" asp-action="Details" 
+                   class="btn btn-sm btn-primary" asp-route-id="@item.WorkoutProgramId">
+                    Details
+                </a>
+
+                @if (userProgram != null && !isCreated)
+                {
+                    <!-- Unadopt button (only if adopted and not created) -->
+                    @if (userProgram.Status == ProgramStatus.NotStarted)
+                    {
+                        <form asp-controller="WorkoutProgram" asp-action="Unadopt" 
+                              asp-route-id="@item.WorkoutProgramId" method="post" class="d-inline"
+                              onsubmit="return confirm('Unadopt this program?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Unadopt</button>
+                        </form>
+                    }
+                }
+
+                @if (userProgram != null)
+                {
+                    @if (userProgram.Status == ProgramStatus.NotStarted)
+                    {
+                        <form asp-controller="WorkoutProgram" asp-action="Start" 
+                              asp-route-id="@userProgram.UserProgramId" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-success">Start</button>
+                        </form>
+                    }
+                    else if (userProgram.Status == ProgramStatus.InProgress)
+                    {
+                        <form asp-controller="WorkoutProgram" asp-action="Finish" 
+                              asp-route-id="@userProgram.UserProgramId" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-warning">Finish</button>
+                        </form>
+                    }
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
