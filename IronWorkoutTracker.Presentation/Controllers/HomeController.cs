@@ -4,6 +4,7 @@ using IronWorkoutTracker.Presentation.Models;
 using Microsoft.AspNetCore.Authorization;
 using IronWorkoutTracker.Application.IRepositories;
 using IronWorkout.Shared.EnvironmentStateModels;
+using IronWorkoutTracker.Domain.Entities;
 
 namespace IronWorkoutTracker.Presentation.Controllers;
 
@@ -28,9 +29,29 @@ public class HomeController : Controller
 
         IEnumerable<Domain.Entities.WorkoutProgram> filteredPrograms = filter.ToLower() switch
         {
-            "adopted" => allPrograms.Where(p => p.UserPrograms != null && p.UserPrograms.Any(up => up.UserId == currentUserId) && p.CreatedById != currentUserId),
-            "myprograms" => allPrograms.Where(p => p.CreatedById == currentUserId),
-            _ => allPrograms // "all" or default
+            // My programs: created OR adopted
+            "myprograms" => allPrograms.Where(p => 
+                p.CreatedById == currentUserId || 
+                (p.UserPrograms != null && p.UserPrograms.Any(up => up.UserId == currentUserId))),
+
+            // All programs: didn't create AND didn't adopt
+            "all" => allPrograms.Where(p => 
+                p.CreatedById != currentUserId && 
+                (p.UserPrograms == null || !p.UserPrograms.Any(up => up.UserId == currentUserId))),
+
+            // History: programs where status is Finished
+            "history" => allPrograms.Where(p => 
+                p.UserPrograms != null && 
+                p.UserPrograms.Any(up => up.UserId == currentUserId && up.Status == ProgramStatus.Finished)),
+
+            // Workout: last started program (status InProgress)
+            "workout" => allPrograms.Where(p => 
+                p.UserPrograms != null && 
+                p.UserPrograms.Any(up => up.UserId == currentUserId && up.Status == ProgramStatus.InProgress))
+                .OrderByDescending(p => p.UserPrograms.FirstOrDefault(up => up.UserId == currentUserId).StartDate)
+                .Take(1),
+
+            _ => allPrograms // default
         };
 
         ViewBag.Filter = filter;

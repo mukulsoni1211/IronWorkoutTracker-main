@@ -16,13 +16,13 @@
 
 <!-- Filter Tabs -->
 <ul class="nav nav-tabs mb-4" id="programTabs" role="tablist">
-    <li class="nav-item" role="presentation"></li>
+    <li class="nav-item" role="presentation">
         <a class="nav-link @(currentFilter == "myprograms" ? "active" : "")" 
            asp-controller="Home" 
            asp-action="Index" 
            asp-route-filter="myprograms"
            id="myprograms-tab">
-            My Program
+            My Programs
         </a>
     </li>
     <li class="nav-item" role="presentation">
@@ -35,15 +35,25 @@
         </a>
     </li>
     <li class="nav-item" role="presentation">
-        <a class="nav-link @(currentFilter == "adopted" ? "active" : "")" 
+        <a class="nav-link @(currentFilter == "history" ? "active" : "")" 
            asp-controller="Home" 
            asp-action="Index" 
-           asp-route-filter="adopted"
-           id="adopted-tab">
-            Adopted
+           asp-route-filter="history"
+           id="history-tab">
+            History
+        </a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link @(currentFilter == "workout" ? "active" : "")" 
+           asp-controller="Home" 
+           asp-action="Index" 
+           asp-route-filter="workout"
+           id="workout-tab">
+            Workout
         </a>
     </li>
 </ul>
+
 <table class="table mt-3">
     <thead>
         <tr>
