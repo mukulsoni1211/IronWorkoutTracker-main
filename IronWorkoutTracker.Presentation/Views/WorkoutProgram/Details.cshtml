@@ -15,31 +15,6 @@
             <button type="submit" class="btn btn-secondary">Adopt</button>
         </form>
     }
-    else
-    {
-        if (Model.UserProgram.Status == ProgramStatus.NotStarted)
-        {
-            <form asp-controller="WorkoutProgram"
-                  asp-action="Start"
-                  asp-route-id="@Model.UserProgram.UserProgramId"
-                  method="post">
-                <button type="submit" class="btn btn-primary">Start</button>
-            </form>
-        }
-        else if (Model.UserProgram.Status == ProgramStatus.InProgress)
-        {
-            <form asp-controller="WorkoutProgram"
-                  asp-action="Finish"
-                  asp-route-id="@Model.UserProgram.UserProgramId"
-                  method="post">
-                <button type="submit" class="btn btn-success">Finish</button>
-            </form>
-        }
-        else if (Model.UserProgram.Status == ProgramStatus.Finished)
-        {
-            <span class="badge bg-success">Finished</span>
-        }
-    }
 </div>
 
 <dl class="row">
