@@ -22,6 +22,8 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
             _db.ProgramDays
                .Where(d => d.WorkoutProgramId == workoutProgramId)
                .OrderBy(d => d.Order)
+               .Include(d => d.Exercises)
+                    .ThenInclude(e => e.Exercise)
                .ToListAsync();
 
         public Task<ProgramDay?> GetByIdAsync(int id) =>

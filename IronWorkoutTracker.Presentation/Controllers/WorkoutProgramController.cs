@@ -214,7 +214,7 @@ namespace IronWorkoutTracker.Presentation.Controllers
                     WorkoutProgramId = up.WorkoutProgramId,
                     Name = programDay.Title,
                     Order = programDay?.Order ?? 0,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = DateTime.UtcNow,
                     Exercises = new List<WorkoutDayExercise>()
                 };
 
@@ -223,11 +223,12 @@ namespace IronWorkoutTracker.Presentation.Controllers
                 {
                     var workoutDayExercise = new WorkoutDayExercise
                     {
-                        WorkoutDayId = workoutDay.WorkoutDayId,
                         ProgramDayExerciseId = programDayExercise.ProgramDayExerciseId,
                         ExerciseId = programDayExercise.ExerciseId,
                         ExerciseName = programDayExercise.Exercise.Name,
-                        Sets = new List<WorkoutDayExerciseSet>() // Leave empty for now
+                        Sets = new List<WorkoutDayExerciseSet>(),
+
+                        WorkoutDay = workoutDay
                     };
 
                     workoutDay.Exercises.Add(workoutDayExercise);
@@ -235,6 +236,7 @@ namespace IronWorkoutTracker.Presentation.Controllers
 
                 await _workoutDayRepo.AddAsync(workoutDay);
             }
+
 
             return RedirectToAction("Details", new { id = up.WorkoutProgramId });
         }
