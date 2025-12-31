@@ -15,7 +15,7 @@ public class UserProgram
 
     public User User { get; set; }
     public WorkoutProgram WorkoutProgram { get; set; }
-    public ICollection<WorkoutDay> WorkoutDays { get; set; } = new List<WorkoutDay>();
+    public ICollection<WorkoutDay>? WorkoutDays { get; set; } = new List<WorkoutDay>();
 }
 
 public enum ProgramStatus

@@ -57,7 +57,7 @@ namespace IronWorkoutTracker.Infrastructure.Data.Context
                 .WithOne(wpe => wpe.ProgramDay)
                 .HasForeignKey(wpe => wpe.ProgramDayId);
 
-             modelBuilder.Entity<WorkoutDay>()
+            modelBuilder.Entity<WorkoutDay>()
                 .HasMany(wd => wd.Exercises)
                 .WithOne(wde => wde.WorkoutDay)
                 .HasForeignKey(wde => wde.WorkoutDayId);

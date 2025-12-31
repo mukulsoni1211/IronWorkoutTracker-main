@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using IronWorkoutTracker.Application.IRepositories;
 using IronWorkout.Shared.EnvironmentStateModels;
 using IronWorkoutTracker.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace IronWorkoutTracker.Presentation.Controllers;
 
@@ -22,7 +23,7 @@ public class HomeController : Controller
         _currentUser = currentUser;
     }
 
-    public async Task<IActionResult> Index(string filter = "all")
+    public async Task<IActionResult> Index(string filter = "workout")
     {
         var allPrograms = await _workoutProgramRepository.GetAllAsync();
         var currentUserId = int.Parse(_currentUser.UserId);
@@ -45,11 +46,16 @@ public class HomeController : Controller
                 p.UserPrograms.Any(up => up.UserId == currentUserId && up.Status == ProgramStatus.Finished)),
 
             // Workout: last started program (status InProgress)
-            "workout" => allPrograms.Where(p => 
-                p.UserPrograms != null && 
-                p.UserPrograms.Any(up => up.UserId == currentUserId && up.Status == ProgramStatus.InProgress))
-                .OrderByDescending(p => p.UserPrograms.FirstOrDefault(up => up.UserId == currentUserId).StartDate)
-                .Take(1),
+            "workout" => await _workoutProgramRepository.GetQuery()
+                .Include(p => p.UserPrograms)
+                    .ThenInclude(up => up.WorkoutDays)
+                        .ThenInclude(wd => wd.Exercises)
+                .Where(p => 
+                    p.UserPrograms != null && 
+                    p.UserPrograms.Any(up => up.UserId == currentUserId && up.Status == ProgramStatus.InProgress))
+                    .OrderByDescending(p => p.UserPrograms.FirstOrDefault(up => up.UserId == currentUserId).StartDate)
+                    .Take(1)
+                    .ToListAsync(),
 
             _ => allPrograms // default
         };

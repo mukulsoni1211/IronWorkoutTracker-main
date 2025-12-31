@@ -11,6 +11,7 @@ public class WorkoutDay
     public string Name { get; set; }
     public int Order { get; set; }
     public DateTime CreatedDate { get; set; }
-    public List<WorkoutDayExercise> Exercises { get; set; }
+    public ICollection<WorkoutDayExercise>? Exercises { get; set; }
     public UserProgram UserProgram { get; set; }
+    public ProgramDay? ProgramDay { get; set; }
 }

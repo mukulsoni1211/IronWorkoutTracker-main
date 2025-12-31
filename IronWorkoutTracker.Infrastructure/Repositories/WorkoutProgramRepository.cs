@@ -12,6 +12,11 @@ public class WorkoutProgramRepository : IWorkoutProgramRepository
         _db = db;
     }
 
+    public IQueryable<WorkoutProgram> GetQuery()
+    {
+        return _db.WorkoutPrograms.AsQueryable();
+    }
+
     public Task<List<WorkoutProgram>> GetAllAsync()
         => _db.WorkoutPrograms.Include(p => p.CreatedBy).Include(p => p.UserPrograms).ToListAsync();
 
