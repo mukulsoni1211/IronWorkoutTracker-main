@@ -2,29 +2,174 @@
 @model IEnumerable<IronWorkoutTracker.Domain.Entities.WorkoutProgram>
 @using IronWorkoutTracker.Domain.Entities
 @inject CurrentUser currentUser
+
 @foreach (var program in Model)
 {
-    
     var userProgram = program.UserPrograms?.FirstOrDefault(up => up.UserId == int.Parse(currentUser.UserId));
     
-    <div class="card">
+    <div class="card mb-4">
         <div class="card-header">
             <h5>@program.Name - Current Workout</h5>
             <small class="text-muted">Started: @userProgram?.StartDate.ToString("dd MMM, yyyy")</small>
         </div>
         <div class="card-body">
             <p>@program.Description</p>
-            
-            <!-- Add your workout forms/functionality here -->
-            <a asp-controller="WorkoutProgram" asp-action="Details" 
-               class="btn btn-primary" asp-route-id="@program.WorkoutProgramId">
-                Continue Workout
-            </a>
-            
-            <form asp-controller="WorkoutProgram" asp-action="Finish" 
-                  asp-route-id="@userProgram.UserProgramId" method="post" class="d-inline">
-                <button type="submit" class="btn btn-success">Mark as Finished</button>
-            </form>
+
+            <!-- Workout Days Accordion -->
+            <div class="accordion" id="workoutDayAccordion">
+                @foreach (var workoutDay in userProgram.WorkoutDays)
+                {
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#workoutDay-@workoutDay.WorkoutDayId">
+                                <strong>@workoutDay.Name - Day @workoutDay.Order</strong>
+                            </button>
+                        </h2>
+                        <div id="workoutDay-@workoutDay.WorkoutDayId" class="accordion-collapse collapse show" 
+                             data-bs-parent="#workoutDayAccordion">
+                            <div class="accordion-body">
+                                <!-- Exercises Accordion -->
+                                <div class="accordion" id="exerciseAccordion-@workoutDay.WorkoutDayId">
+                                    @foreach (var exercise in workoutDay.Exercises)
+                                    {
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button" 
+                                                        data-bs-toggle="collapse" 
+                                                        data-bs-target="#sets-@exercise.WorkoutDayExerciseId">
+                                                    @exercise.ExerciseName
+                                                </button>
+                                            </h2>
+                                            <div id="sets-@exercise.WorkoutDayExerciseId" 
+                                                 class="accordion-collapse collapse show" 
+                                                 data-bs-parent="#exerciseAccordion-@workoutDay.WorkoutDayId">
+                                                <div class="accordion-body">
+                                                    <div class="mb-3">
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-success"
+                                                                data-action="Create"
+                                                                data-controller="WorkoutDayExerciseSet"
+                                                                data-workout-day-exercise-id="@exercise.WorkoutDayExerciseId"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#GlobalModal">
+                                                            <i class="bi bi-plus"></i> Add Set
+                                                        </button>
+                                                    </div>
+
+                                                    @if (exercise.Sets?.Any() == true)
+                                                    {
+                                                        <div class="table-responsive">
+                                                            <table class="table table-sm table-bordered">
+                                                                <thead class="table-light">
+                                                                    <tr>
+                                                                        <th>Set #</th>
+                                                                        <th>Reps</th>
+                                                                        <th>Weight</th>
+                                                                        <th>Rest (sec)</th>
+                                                                        <th>RPE</th>
+                                                                        <th>Note</th>
+                                                                        <th>Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                @foreach (var set in exercise.Sets.OrderBy(s => s.WorkoutDayExerciseSetId))
+                                                                {
+                                                                    var setIndex = exercise.Sets.Where(s => s.WorkoutDayExerciseSetId <= set.WorkoutDayExerciseSetId).Count();
+                                                                    <tr>
+                                                                        <td><strong>@setIndex</strong></td>
+                                                                        <td>@(set.Reps)</td>
+                                                                        <td>
+                                                                            @if (set.Weight.HasValue)
+                                                                            {
+                                                                                <text>@set.Weight kg</text>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="text-muted">-</span>
+                                                                            }
+                                                                        </td>
+                                                                        <td>
+                                                                            @if (set.RestSeconds.HasValue)
+                                                                            {
+                                                                                <text>@set.RestSeconds</text>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="text-muted">-</span>
+                                                                            }
+                                                                        </td>
+                                                                        <td>
+                                                                            @if (set.RPE.HasValue)
+                                                                            {
+                                                                                <text>@set.RPE</text>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="text-muted">-</span>
+                                                                            }
+                                                                        </td>
+                                                                        <td>
+                                                                            @if (!string.IsNullOrEmpty(set.Note))
+                                                                            {
+                                                                                <small>@set.Note</small>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="text-muted">-</span>
+                                                                            }
+                                                                        </td>
+                                                                        <td>
+                                                                            <button type="button"
+                                                                                    class="btn btn-xs btn-primary"
+                                                                                    data-action="EditModal"
+                                                                                    data-controller="WorkoutDayExerciseSet"
+                                                                                    data-id="@set.WorkoutDayExerciseSetId"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#GlobalModal">
+                                                                                <i class="bi bi-pencil"></i>
+                                                                            </button>
+
+                                                                            <form asp-controller="WorkoutDayExerciseSet"
+                                                                                  asp-action="Delete"
+                                                                                  asp-route-id="@set.WorkoutDayExerciseSetId"
+                                                                                  method="post"
+                                                                                  class="d-inline"
+                                                                                  onsubmit="return confirm('Delete this set?');">
+                                                                                <button type="submit" class="btn btn-xs btn-danger">
+                                                                                    <i class="bi bi-trash"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="alert alert-info mb-0">
+                                                            No sets added yet.
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="mt-4">
+                <form asp-controller="WorkoutProgram" asp-action="Finish" 
+                      asp-route-id="@userProgram.UserProgramId" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-success">Mark as Finished</button>
+                </form>
+            </div>
         </div>
     </div>
 }
