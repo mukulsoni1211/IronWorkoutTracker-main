@@ -49,5 +49,12 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
             _db.SaveChangesAsync();
         }
 
+        public async Task<List<UserProgram>> GetAllActiveByUserIdAsync(int userId)
+        {
+            return await _db.UserPrograms
+                .Include(up => up.WorkoutProgram)
+                .Where(up => up.UserId == userId && up.Status == ProgramStatus.InProgress)
+                .ToListAsync();
+        }
     }
 }

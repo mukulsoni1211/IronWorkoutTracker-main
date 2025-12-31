@@ -199,6 +199,17 @@ namespace IronWorkoutTracker.Presentation.Controllers
                 if (up == null || up.UserId != userIdInt) return Forbid();
             }
 
+            // Mark ALL other active programs as finished
+            var activePrograms = await _userProgramRepo.GetAllActiveByUserIdAsync(userIdInt);
+            foreach (var activeProgram in activePrograms)
+            {
+                if (activeProgram.UserProgramId != id)
+                {
+                    activeProgram.Status = ProgramStatus.Finished;
+                    await _userProgramRepo.UpdateAsync(activeProgram);
+                }
+            }
+
             up.Status = ProgramStatus.InProgress;
             await _userProgramRepo.UpdateAsync(up);
 
@@ -210,6 +221,7 @@ namespace IronWorkoutTracker.Presentation.Controllers
                 var workoutDay = new WorkoutDay
                 {
                     UserId = userIdInt,
+                    UserProgramId = id,
                     ProgramDayId = programDay.ProgramDayId,
                     WorkoutProgramId = up.WorkoutProgramId,
                     Name = programDay.Title,

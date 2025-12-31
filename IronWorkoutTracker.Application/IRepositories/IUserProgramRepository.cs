@@ -10,5 +10,6 @@ namespace IronWorkoutTracker.Application.IRepositories
         Task DeleteByUserAndProgramAsync(int userId, int workoutProgramId);
         Task<UserProgram?> GetByIdAsync(int id);
         Task UpdateAsync(UserProgram userProgram);
+        Task<List<UserProgram>> GetAllActiveByUserIdAsync(int userId);
     }
 }
