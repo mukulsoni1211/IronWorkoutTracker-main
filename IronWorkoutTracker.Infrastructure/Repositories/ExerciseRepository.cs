@@ -19,8 +19,7 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
 
         public Task<List<Exercise>> GetAllAsync() =>
             _db.Exercises
-               .Where(e => e.IsActive == true || e.IsActive == null)
-               .OrderBy(e => e.Name)
+               .OrderByDescending(e => e.CreatedDate)
                .ToListAsync();
 
         public Task<Exercise?> GetByIdAsync(int id) =>
@@ -29,7 +28,6 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
         public async Task AddAsync(Exercise entity)
         {
             entity.CreatedDate = DateTime.UtcNow;
-            entity.IsActive = true;
             _db.Exercises.Add(entity);
             await _db.SaveChangesAsync();
         }

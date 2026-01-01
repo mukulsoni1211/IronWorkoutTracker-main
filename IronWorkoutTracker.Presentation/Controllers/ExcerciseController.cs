@@ -17,7 +17,7 @@ namespace IronWorkoutTracker.Presentation.Controllers
 
         // GET: /Exercise
         // Authorize with Admin role
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var exercises = await _repo.GetAllAsync();

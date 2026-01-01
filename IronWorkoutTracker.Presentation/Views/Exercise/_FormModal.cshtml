@@ -39,15 +39,17 @@
         </div>
 
         <div class="mb-3 form-check">
-		    <input type="checkbox" 
-		           id="IsActive" 
-		           name="IsActive" 
-		           class="form-check-input"
-		           @(Model?.IsActive == true ? "checked" : "") />
-		    <label for="IsActive" class="form-check-label">
-		        Mark as Active
-		    </label>
-		</div>
+            <input type="checkbox" 
+                   id="IsActive" 
+                   name="IsActive" 
+                   value="true"
+                   class="form-check-input"
+                   @(Model?.IsActive == true ? "checked" : "") />
+            <input type="hidden" name="IsActive" value="false" />
+            <label for="IsActive" class="form-check-label">
+                Mark as Active
+            </label>
+        </div>
 
     </div>
 
