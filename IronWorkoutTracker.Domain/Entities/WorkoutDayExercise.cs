@@ -11,4 +11,5 @@ public class WorkoutDayExercise
     
     public List<WorkoutDayExerciseSet> Sets { get; set; }
     public WorkoutDay WorkoutDay { get; set; }
+    public Exercise? Exercise { get; set; }
 }

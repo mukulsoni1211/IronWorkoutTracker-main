@@ -11,5 +11,5 @@ public class WorkoutDayExerciseSet
     public int? RPE { get; set; }
     public string? Note { get; set; }
 
-    public WorkoutDayExercise WorkoutDayExercise { get; set; }
+    public WorkoutDayExercise? WorkoutDayExercise { get; set; }
 }

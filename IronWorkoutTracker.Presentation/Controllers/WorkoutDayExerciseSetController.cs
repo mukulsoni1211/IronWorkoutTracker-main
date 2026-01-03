@@ -1,65 +1,68 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using IronWorkoutTracker.Presentation.Models;
-using Microsoft.AspNetCore.Authorization;
 using IronWorkoutTracker.Application.IRepositories;
-using IronWorkout.Shared.EnvironmentStateModels;
 using IronWorkoutTracker.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
+using IronWorkout.Shared.EnvironmentStateModels;
 
-public class WorkoutDayExerciseSetController : Controller
+namespace IronWorkoutTracker.Presentation.Controllers
 {
-    private readonly IWorkoutDayExerciseSetRepository _setRepo;
-    private readonly CurrentUser _currentUser;
-
-    public WorkoutDayExerciseSetController(
-        IWorkoutDayExerciseSetRepository setRepo,
-        CurrentUser currentUser)
+    public class WorkoutDayExerciseSetController : Controller
     {
-        _setRepo = setRepo;
-        _currentUser = currentUser;
-    }
+        private readonly IWorkoutDayExerciseSetRepository _setRepo;
+        private readonly IWorkoutDayExerciseRepository _workoutDayExerciseRepository;
+        private readonly CurrentUser _currentUser;
 
-    [HttpGet]
-    public async Task<IActionResult> Create(int workoutDayExerciseId)
-    {
-        var model = new WorkoutDayExerciseSet { WorkoutDayExerciseId = workoutDayExerciseId };
-        return PartialView("_FormModal", model);
-    }
+        public WorkoutDayExerciseSetController(
+            IWorkoutDayExerciseSetRepository setRepo,
+            IWorkoutDayExerciseRepository workoutDayExerciseRepository,
+            CurrentUser currentUser)
+        {
+            _setRepo = setRepo;
+            _workoutDayExerciseRepository = workoutDayExerciseRepository;
+            _currentUser = currentUser;
+        }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SaveSet(WorkoutDayExerciseSet model)
-    {
-        if (!ModelState.IsValid)
+        [HttpGet]
+        public async Task<IActionResult> Create(int workoutDayExerciseId)
+        {
+            var model = new WorkoutDayExerciseSet { WorkoutDayExerciseId = workoutDayExerciseId };
             return PartialView("_FormModal", model);
-
-        if (model.WorkoutDayExerciseSetId == 0)
-        {
-            await _setRepo.AddAsync(model);
         }
-        else
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SaveSet(WorkoutDayExerciseSet model)
         {
-            var existing = await _setRepo.GetByIdAsync(model.WorkoutDayExerciseSetId);
-            if (existing != null)
+            if (!ModelState.IsValid)
+                return PartialView("_FormModal", model);
+
+            if (model.WorkoutDayExerciseSetId == 0)
             {
-                existing.Reps = model.Reps;
-                existing.Weight = model.Weight;
-                existing.RestSeconds = model.RestSeconds;
-                existing.RPE = model.RPE;
-                existing.Note = model.Note;
-
-                await _setRepo.UpdateAsync(existing);
+                await _setRepo.AddAsync(model);
             }
+            else
+            {
+                var existing = await _setRepo.GetByIdAsync(model.WorkoutDayExerciseSetId);
+                if (existing != null)
+                {
+                    existing.Reps = model.Reps;
+                    existing.Weight = model.Weight;
+                    existing.RestSeconds = model.RestSeconds;
+                    existing.RPE = model.RPE;
+                    existing.Note = model.Note;
+
+                    await _setRepo.UpdateAsync(existing);
+                }
+            }
+
+            return Redirect("/");
         }
 
-        return Json(new { success = true });
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(int id)
-    {
-        await _setRepo.DeleteAsync(id);
-        return RedirectToAction("Index", "Home", new { filter = "workout" });
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _setRepo.DeleteAsync(id);
+            return RedirectToAction("Index", "Home", new { filter = "workout" });
+        }
     }
 }

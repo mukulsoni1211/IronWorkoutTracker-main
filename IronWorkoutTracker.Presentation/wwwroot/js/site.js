@@ -15,6 +15,7 @@
             let url = `/${controller}/${action}`;            
             const programDayId = modalTrigger.dataset.programDayId;
             const programDayExerciseId = modalTrigger.dataset.programDayExerciseId;
+            const workoutDayExerciseId = modalTrigger.dataset.workoutDayExerciseId;
 
             if (id) {
                 url += `/${id}`;
@@ -24,6 +25,8 @@
                 url += `?programDayId=${programDayId}`;
             } else if (programId) {
                 url += `?workoutProgramId=${programId}`;
+            } else if (workoutDayExerciseId) {
+                url += `?workoutDayExerciseId=${workoutDayExerciseId}`;
             }
   
             console.log('Loading URL:', url);

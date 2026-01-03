@@ -62,27 +62,46 @@
                         }
                         else
                         {
-                            <div class="exercises-list">
+                            <div class="exercises-table">
                                 @foreach (var exercise in workoutDay.Exercises)
                                 {
-                                    <div class="exercise-item">
-                                        <div class="exercise-header">
-                                            <h6 class="exercise-name">@exercise.ExerciseName</h6>
-                                            <span class="exercise-id text-muted">ID: @exercise.ExerciseId</span>
+                                    <div class="exercise-row d-flex align-items-start gap-3 p-3 border-bottom hover-row">
+                                        <!-- Name Column -->
+                                        <div class="col-md-3 flex-grow-1">
+                                            <div class="exercise-name mb-1">
+                                                <div class="name-main">@exercise.Exercise.Name</div>
+                                                <small class="text-muted description">@exercise.Exercise.Description</small>
+                                            </div>
                                         </div>
-                                        
-                                        <div class="exercise-details">
-                                            <small class="text-muted">
-                                                @if (exercise.Sets != null && exercise.Sets.Count > 0)
-                                                {
-                                                    <span class="detail-badge">@exercise.Sets sets</span>
-                                                }
-                                               
-                                            </small>
+
+
+                                        <!-- Category Column -->
+                                        <div class="col-md-2">
+                                            <span class="badge bg-secondary">@exercise.Exercise.Category</span>
+                                        </div>
+
+                                        <!-- Equipment Column -->
+                                        <div class="col-md-2">
+                                            <span class="badge bg-info text-dark">@exercise.Exercise.Equipment</span>
+                                        </div>
+
+                                        <!-- Action Buttons Column -->
+                                        <div class="col-md-2 text-end">
+                                            <button type="button"
+                                                class="btn btn-success mb-3"
+                                                id="addDayBtn"
+                                                data-action="Create"
+                                                data-controller="WorkoutDayExerciseSet"
+                                                data-workout-day-exercise-id="@exercise.WorkoutDayExerciseId"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#GlobalModal">
+                                                Workout
+                                            </button>
                                         </div>
                                     </div>
                                 }
                             </div>
+
                         }
                     </div>
                 </div>
@@ -90,7 +109,14 @@
         }
     </div>
 </div>
-
+<!-- Modal -->
+<div class="modal fade" id="GlobalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContent">
+            <!-- Loaded via AJAX -->
+        </div>
+    </div>
+</div>
 <style>
 .workout-container {
     padding: 20px 0;

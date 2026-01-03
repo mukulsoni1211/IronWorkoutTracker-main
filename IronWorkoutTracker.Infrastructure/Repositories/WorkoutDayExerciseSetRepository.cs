@@ -27,6 +27,14 @@ public class WorkoutDayExerciseSetRepository : IWorkoutDayExerciseSetRepository
         return await _db.WorkoutDayExerciseSets.FirstOrDefaultAsync(s => s.WorkoutDayExerciseSetId == id);
     }
 
+    public async Task<List<WorkoutDayExerciseSet>> GetByWorkoutDayExerciseIdAsync(int workoutDayExerciseId)
+    {
+        return await _db.WorkoutDayExerciseSets
+            .Where(s => s.WorkoutDayExerciseId == workoutDayExerciseId)
+            .OrderBy(s => s.WorkoutDayExerciseSetId)
+            .ToListAsync();
+    }
+
     public async Task UpdateAsync(WorkoutDayExerciseSet entity)
     {
         _db.WorkoutDayExerciseSets.Update(entity);
