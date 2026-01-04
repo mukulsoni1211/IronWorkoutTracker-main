@@ -51,6 +51,10 @@ public class HomeController : Controller
                     .ThenInclude(up => up.WorkoutDays)
                         .ThenInclude(wd => wd.Exercises)
                             .ThenInclude(wde => wde.Exercise)
+                .Include(p => p.UserPrograms)
+                    .ThenInclude(up => up.WorkoutDays)
+                        .ThenInclude(wd => wd.Exercises)
+                            .ThenInclude(wde => wde.Sets)
                 .Where(p => 
                     p.UserPrograms != null && 
                     p.UserPrograms.Any(up => up.UserId == currentUserId && up.Status == ProgramStatus.InProgress))

@@ -28,6 +28,15 @@ namespace IronWorkoutTracker.Presentation.Controllers
             return PartialView("_FormModal", model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditModal(int Id)
+        {
+            var model = await _setRepo.GetByIdAsync(Id);
+            if (model == null)
+                return NotFound();
+            return PartialView("_FormModal", model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveSet(WorkoutDayExerciseSet model)
@@ -62,7 +71,7 @@ namespace IronWorkoutTracker.Presentation.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             await _setRepo.DeleteAsync(id);
-            return RedirectToAction("Index", "Home", new { filter = "workout" });
+            return Redirect("/");
         }
     }
 }

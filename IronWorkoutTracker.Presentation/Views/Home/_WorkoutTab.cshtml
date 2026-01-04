@@ -66,14 +66,13 @@
                                 @foreach (var exercise in workoutDay.Exercises)
                                 {
                                     <div class="exercise-row d-flex align-items-start gap-3 p-3 border-bottom hover-row">
-                                        <!-- Name Column -->
-                                        <div class="col-md-3 flex-grow-1">
+                                        <!-- Name + Description Column -->
+                                        <div class="col-md-4 flex-grow-1">
                                             <div class="exercise-name mb-1">
                                                 <div class="name-main">@exercise.Exercise.Name</div>
                                                 <small class="text-muted description">@exercise.Exercise.Description</small>
                                             </div>
                                         </div>
-
 
                                         <!-- Category Column -->
                                         <div class="col-md-2">
@@ -88,15 +87,84 @@
                                         <!-- Action Buttons Column -->
                                         <div class="col-md-2 text-end">
                                             <button type="button"
-                                                class="btn btn-success mb-3"
-                                                id="addDayBtn"
-                                                data-action="Create"
-                                                data-controller="WorkoutDayExerciseSet"
-                                                data-workout-day-exercise-id="@exercise.WorkoutDayExerciseId"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#GlobalModal">
-                                                Workout
+                                                    class="btn btn-success btn-sm me-1"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#setsAccordion_@exercise.WorkoutDayExerciseId"
+                                                    aria-expanded="false">
+                                                <i class="fas fa-list me-1"></i>Sets (@(exercise.Sets?.Count ?? 0))
                                             </button>
+                                            
+                                            <button type="button"
+                                                    class="btn btn-primary btn-sm"
+                                                    id="addDayBtn"
+                                                    data-action="Create"
+                                                    data-controller="WorkoutDayExerciseSet"
+                                                    data-workout-day-exercise-id="@exercise.WorkoutDayExerciseId"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#GlobalModal">
+                                                + Set
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Nested Sets Accordion -->
+                                    <div class="collapse mt-2" id="setsAccordion_@exercise.WorkoutDayExerciseId">
+                                        <div class="card card-body border-start ps-4" style="border-left-color: #28a745 !important;">
+                                            @if (exercise.Sets == null || !exercise.Sets.Any())
+                                            {
+                                                <p class="text-muted mb-2">No sets logged yet.</p>
+                                            }
+                                            else
+                                            {
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Reps</th>
+                                                                <th>Weight</th>
+                                                                <th>Rest</th>
+                                                                <th>RPE</th>
+                                                                <th>Note</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var set in exercise.Sets.OrderBy(s => s.WorkoutDayExerciseSetId))
+                                                            {
+                                                                <tr>
+                                                                    <td>@set.Reps</td>
+                                                                    <td>@set.Weight kg</td>
+                                                                    <td>@set.RestSeconds s</td>
+                                                                    <td>@set.RPE</td>
+                                                                    <td>@set.Note</td>
+                                                                    <td>
+                                                                        <button type="button"
+                                                                                class="btn btn-sm btn-primary"
+                                                                                data-action="EditModal"
+                                                                                data-controller="WorkoutDayExerciseSet"
+                                                                                data-id="@set.WorkoutDayExerciseSetId"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#GlobalModal">
+                                                                            <i class="bi bi-pencil"></i>
+                                                                        </button>
+
+                                                                        <form asp-controller="WorkoutDayExerciseSet"
+                                                                              asp-action="Delete"
+                                                                              asp-route-id="@set.WorkoutDayExerciseSetId"
+                                                                              method="post"
+                                                                              class="d-inline"
+                                                                              onsubmit="return confirm('Delete this workout?');">
+                                                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                                                <i class="bi bi-trash"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 }
