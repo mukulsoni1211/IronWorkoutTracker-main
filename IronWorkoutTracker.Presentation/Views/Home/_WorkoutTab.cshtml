@@ -93,17 +93,18 @@
                                                     aria-expanded="false">
                                                 <i class="fas fa-list me-1"></i>Sets (@(exercise.Sets?.Count ?? 0))
                                             </button>
-                                            
-                                            <button type="button"
-                                                    class="btn btn-primary btn-sm"
-                                                    id="addDayBtn"
-                                                    data-action="Create"
-                                                    data-controller="WorkoutDayExerciseSet"
-                                                    data-workout-day-exercise-id="@exercise.WorkoutDayExerciseId"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#GlobalModal">
-                                                + Set
-                                            </button>
+                                            @if (userProgram.Status == ProgramStatus.InProgress){
+                                                <button type="button"
+                                                        class="btn btn-primary btn-sm"
+                                                        id="addDayBtn"
+                                                        data-action="Create"
+                                                        data-controller="WorkoutDayExerciseSet"
+                                                        data-workout-day-exercise-id="@exercise.WorkoutDayExerciseId"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#GlobalModal">
+                                                    + Set
+                                                </button>
+                                            }
                                         </div>
                                     </div>
 
@@ -137,28 +138,31 @@
                                                                     <td>@set.RestSeconds s</td>
                                                                     <td>@set.RPE</td>
                                                                     <td>@set.Note</td>
-                                                                    <td>
-                                                                        <button type="button"
-                                                                                class="btn btn-sm btn-primary"
-                                                                                data-action="EditModal"
-                                                                                data-controller="WorkoutDayExerciseSet"
-                                                                                data-id="@set.WorkoutDayExerciseSetId"
-                                                                                data-bs-toggle="modal"
-                                                                                data-bs-target="#GlobalModal">
-                                                                            <i class="bi bi-pencil"></i>
-                                                                        </button>
-
-                                                                        <form asp-controller="WorkoutDayExerciseSet"
-                                                                              asp-action="Delete"
-                                                                              asp-route-id="@set.WorkoutDayExerciseSetId"
-                                                                              method="post"
-                                                                              class="d-inline"
-                                                                              onsubmit="return confirm('Delete this workout?');">
-                                                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                                                <i class="bi bi-trash"></i>
+                                                                    @if (userProgram.Status == ProgramStatus.InProgress)
+                                                                    {
+                                                                        <td>
+                                                                            <button type="button"
+                                                                                    class="btn btn-sm btn-primary"
+                                                                                    data-action="EditModal"
+                                                                                    data-controller="WorkoutDayExerciseSet"
+                                                                                    data-id="@set.WorkoutDayExerciseSetId"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#GlobalModal">
+                                                                                <i class="bi bi-pencil"></i>
                                                                             </button>
-                                                                        </form>
-                                                                    </td>
+
+                                                                            <form asp-controller="WorkoutDayExerciseSet"
+                                                                                asp-action="Delete"
+                                                                                asp-route-id="@set.WorkoutDayExerciseSetId"
+                                                                                method="post"
+                                                                                class="d-inline"
+                                                                                onsubmit="return confirm('Delete this workout?');">
+                                                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                                                    <i class="bi bi-trash"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>
+                                                                    }
                                                                 </tr>
                                                             }
                                                         </tbody>
