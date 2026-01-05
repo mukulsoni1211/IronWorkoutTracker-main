@@ -5,6 +5,7 @@ namespace IronWorkoutTracker.Application.IRepositories
 {
     public interface IUserProgramRepository
     {   
+        IQueryable<UserProgram> GetQuery();
         Task<UserProgram?> GetByUserAndProgramAsync(int userId, int workoutProgramId);
         Task AddAsync(UserProgram entity);
         Task DeleteByUserAndProgramAsync(int userId, int workoutProgramId);

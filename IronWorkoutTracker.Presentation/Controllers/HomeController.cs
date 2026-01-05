@@ -14,12 +14,14 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IWorkoutProgramRepository _workoutProgramRepository;
+    private readonly IUserProgramRepository _userProgramRepo; 
     private readonly CurrentUser _currentUser;
 
-    public HomeController(ILogger<HomeController> logger, IWorkoutProgramRepository workoutProgramRepository, CurrentUser currentUser)
+    public HomeController(ILogger<HomeController> logger, IWorkoutProgramRepository workoutProgramRepository, CurrentUser currentUser, IUserProgramRepository userProgramRepo)
     {
         _logger = logger;
         _workoutProgramRepository = workoutProgramRepository;
+        _userProgramRepo = userProgramRepo;
         _currentUser = currentUser;
     }
 
@@ -68,6 +70,34 @@ public class HomeController : Controller
         ViewBag.Filter = filter;
         ViewBag.CurrentUserId = currentUserId;
         return View(filteredPrograms);
+    }
+
+
+    public async Task<IActionResult> History(int Id) // from asp-route-id
+    {
+        var currentUserId = int.Parse(_currentUser.UserId);
+
+        // Load the specific UserProgram with related graph
+        var userProgram = await _userProgramRepo.GetQuery()
+            .Include(up => up.WorkoutProgram)
+            .Include(up => up.WorkoutDays)
+                .ThenInclude(wd => wd.Exercises)
+                    .ThenInclude(wde => wde.Sets)
+            .Include(up => up.WorkoutDays)
+                .ThenInclude(wd => wd.Exercises)
+                    .ThenInclude(wde => wde.Exercise)
+            .FirstOrDefaultAsync(up => up.UserProgramId == Id 
+                                       && up.UserId == currentUserId);
+
+        if (userProgram == null)
+            return NotFound();
+
+        //IEnumerable<UserProgram>
+        var model = new List<UserProgram> { userProgram };
+
+        ViewBag.CurrentUserId = currentUserId;
+        ViewBag.UserProgramId = Id;
+        return View("History", model); // History.cshtml
     }
 
     public IActionResult Privacy()

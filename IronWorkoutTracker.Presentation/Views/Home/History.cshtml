@@ -1,0 +1,303 @@
+@model IEnumerable<IronWorkoutTracker.Domain.Entities.UserProgram>
+@using IronWorkoutTracker.Domain.Entities;
+
+@{
+    ViewData["Title"] = "History Details";
+}
+
+<h2>Program History Details</h2>
+
+@{
+    var currentUserId = (int)ViewBag.CurrentUserId;
+    var UserprogramId = (int)ViewBag.UserProgramId;
+    var userProgram = Model.FirstOrDefault();
+    var workoutProgram = userProgram?.WorkoutProgram;
+    
+    if (userProgram == null || workoutProgram == null)
+    {
+        <div class="alert alert-danger">
+            Unable to load program history details.
+        </div>
+        return;
+    }
+}
+
+<div class="workout-container">
+    <!-- Program Header -->
+    <div class="program-header mb-4">
+        <h3>@workoutProgram.Name</h3>
+        <p class="text-muted">
+            Active Program • Started @userProgram.StartDate.ToString("h:mm tt MMM dd, yyyy")
+        </p>
+    </div>
+
+    <!-- Workout Days List -->
+    <div class="workout-days-list">
+        @if (userProgram.WorkoutDays == null || userProgram.WorkoutDays.Count == 0)
+        {
+            <div class="alert alert-warning">
+                No workout days for this program.
+            </div>
+        }
+        else
+        {
+            @foreach (var workoutDay in userProgram.WorkoutDays.OrderBy(wd => wd.Order))
+            {
+                <div class="card mb-3 workout-day-card">
+                    <!-- Workout Day Header -->
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">@workoutDay.Name</h5>
+                            <small class="text-muted">Day @(workoutDay.Order)</small>
+                        </div>
+                        <span class="badge badge-primary">@(workoutDay.Exercises?.Count ?? 0) exercises</span>
+                    </div>
+
+                    <!-- Exercises List -->
+                    <div class="card-body">
+                        @if (workoutDay.Exercises == null || workoutDay.Exercises.Count == 0)
+                        {
+                            <p class="text-muted mb-0">No exercises for this day.</p>
+                        }
+                        else
+                        {
+                            <div class="exercises-table">
+                                @foreach (var exercise in workoutDay.Exercises)
+                                {
+                                    <div class="exercise-row d-flex align-items-start gap-3 p-3 border-bottom hover-row">
+                                        <!-- Name + Description Column -->
+                                        <div class="col-md-4 flex-grow-1">
+                                            <div class="exercise-name mb-1">
+                                                <div class="name-main">@exercise.Exercise.Name</div>
+                                                <small class="text-muted description">@exercise.Exercise.Description</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- Category Column -->
+                                        <div class="col-md-2">
+                                            <span class="badge bg-secondary">@exercise.Exercise.Category</span>
+                                        </div>
+
+                                        <!-- Equipment Column -->
+                                        <div class="col-md-2">
+                                            <span class="badge bg-info text-dark">@exercise.Exercise.Equipment</span>
+                                        </div>
+
+                                        <!-- Action Buttons Column -->
+                                        <div class="col-md-2 text-end">
+                                            <button type="button"
+                                                    class="btn btn-success btn-sm me-1"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#setsAccordion_@exercise.WorkoutDayExerciseId"
+                                                    aria-expanded="false">
+                                                <i class="fas fa-list me-1"></i>Sets (@(exercise.Sets?.Count ?? 0))
+                                            </button>
+                                            @if (userProgram.Status == ProgramStatus.InProgress){
+                                                <button type="button"
+                                                        class="btn btn-primary btn-sm"
+                                                        id="addDayBtn"
+                                                        data-action="Create"
+                                                        data-controller="WorkoutDayExerciseSet"
+                                                        data-workout-day-exercise-id="@exercise.WorkoutDayExerciseId"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#GlobalModal">
+                                                    + Set
+                                                </button>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Nested Sets Accordion -->
+                                    <div class="collapse mt-2" id="setsAccordion_@exercise.WorkoutDayExerciseId">
+                                        <div class="card card-body border-start ps-4" style="border-left-color: #28a745 !important;">
+                                            @if (exercise.Sets == null || !exercise.Sets.Any())
+                                            {
+                                                <p class="text-muted mb-2">No sets logged yet.</p>
+                                            }
+                                            else
+                                            {
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Reps</th>
+                                                                <th>Weight</th>
+                                                                <th>Rest</th>
+                                                                <th>RPE</th>
+                                                                <th>Note</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @foreach (var set in exercise.Sets.OrderBy(s => s.WorkoutDayExerciseSetId))
+                                                            {
+                                                                <tr>
+                                                                    <td>@set.Reps</td>
+                                                                    <td>@set.Weight kg</td>
+                                                                    <td>@set.RestSeconds s</td>
+                                                                    <td>@set.RPE</td>
+                                                                    <td>@set.Note</td>
+                                                                    @if (userProgram.Status == ProgramStatus.InProgress)
+                                                                    {
+                                                                        <td>
+                                                                            <button type="button"
+                                                                                    class="btn btn-sm btn-primary"
+                                                                                    data-action="EditModal"
+                                                                                    data-controller="WorkoutDayExerciseSet"
+                                                                                    data-id="@set.WorkoutDayExerciseSetId"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#GlobalModal">
+                                                                                <i class="bi bi-pencil"></i>
+                                                                            </button>
+
+                                                                            <form asp-controller="WorkoutDayExerciseSet"
+                                                                                asp-action="Delete"
+                                                                                asp-route-id="@set.WorkoutDayExerciseSetId"
+                                                                                method="post"
+                                                                                class="d-inline"
+                                                                                onsubmit="return confirm('Delete this workout?');">
+                                                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                                                    <i class="bi bi-trash"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>
+                                                                    }
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="GlobalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContent">
+            <!-- Loaded via AJAX -->
+        </div>
+    </div>
+</div>
+<style>
+.workout-container {
+    padding: 20px 0;
+}
+
+.program-header {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 15px;
+}
+
+.program-header h3 {
+    color: #007bff;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.workout-days-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.workout-day-card {
+    border-left: 4px solid #007bff;
+    transition: box-shadow 0.3s ease;
+}
+
+.workout-day-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.workout-day-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-header h5 {
+    color: #333;
+    margin: 0;
+}
+
+.exercises-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.exercise-item {
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #28a745;
+}
+
+.exercise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.exercise-name {
+    color: #333;
+    font-weight: 500;
+    margin: 0;
+}
+
+.exercise-id {
+    font-size: 12px;
+}
+
+.exercise-details {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.detail-badge {
+    display: inline-block;
+    background-color: #e7f3ff;
+    color: #007bff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.badge-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+</style>
+

@@ -14,6 +14,11 @@ namespace IronWorkoutTracker.Infrastructure.Repositories
             _db = db;
         }
 
+         public IQueryable<UserProgram> GetQuery()
+        {
+            return _db.UserPrograms.AsQueryable();
+        }
+
         public async Task<UserProgram?> GetByUserAndProgramAsync(int userId, int workoutProgramId)
         {
             return await _db.UserPrograms

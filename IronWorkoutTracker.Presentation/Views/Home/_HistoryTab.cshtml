@@ -20,8 +20,8 @@
             <td>@item.Description</td>
             <td>@userProgram?.StartDate.ToString("dd MMM, yyyy")</td>
             <td>
-                <a asp-controller="WorkoutProgram" asp-action="Details" 
-                   class="btn btn-sm btn-primary" asp-route-id="@item.WorkoutProgramId">
+                <a asp-controller="Home" asp-action="History" 
+                   class="btn btn-sm btn-primary" asp-route-id="@userProgram.UserProgramId">
                     Details
                 </a>
             </td>
