@@ -25,11 +25,22 @@
 
 <div class="workout-container">
     <!-- Program Header -->
-    <div class="program-header mb-4">
-        <h3>@workoutProgram.Name</h3>
-        <p class="text-muted">
-            Active Program • Started @userProgram.StartDate.ToString("h:mm tt MMM dd, yyyy")
-        </p>
+    <div class="program-header mb-4 d-flex justify-content-between">
+        <div class="">
+            <h3>@workoutProgram.Name</h3>
+            <p class="text-muted">
+                Active Program • Started @userProgram.StartDate.ToString("h:mm tt MMM dd, yyyy")
+            </p>
+        </div>
+        <div class="">
+            @if (userProgram.Status == ProgramStatus.InProgress)
+            {
+                <form asp-controller="WorkoutProgram" asp-action="Finish" 
+                      asp-route-id="@userProgram.UserProgramId" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-warning">Finish</button>
+                </form>
+            }
+        </div>
     </div>
 
     <!-- Workout Days List -->
